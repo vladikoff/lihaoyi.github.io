@@ -1,0 +1,905 @@
+<html><head><meta charset="utf-8" /><link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" type="text/css" /><link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" /><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.1.0/styles/github-gist.min.css" rel="stylesheet" type="text/css" /><title>What's in a Build Tool?</title><style>@media (min-width: 48em) {.cache6e734f883e5a972fd8c15f0a7a2b05ec-WideStyles-header{
+  bottom: 0px;
+  justify-content: center;
+  position: fixed;
+  top: 0px;
+  width: 25%;
+}
+
+.cache6e734f883e5a972fd8c15f0a7a2b05ec-WideStyles-headerContent{
+  text-align: center;
+}
+
+.cache6e734f883e5a972fd8c15f0a7a2b05ec-WideStyles-content{
+  box-sizing: border-box;
+  margin-left: 25%;
+  padding: 48px;
+}
+
+.cache6e734f883e5a972fd8c15f0a7a2b05ec-WideStyles-footer{
+  bottom: 0px;
+  height: 50px;
+  position: fixed;
+  width: 25%;
+}
+}</style><style>@media (max-width: 48em) {.cache6e734f883e5a972fd8c15f0a7a2b05ec-NarrowStyles-header{
+  margin-bottom: 10px;
+}
+
+.cache6e734f883e5a972fd8c15f0a7a2b05ec-NarrowStyles-content{
+  padding: 16px;
+}
+
+.cache6e734f883e5a972fd8c15f0a7a2b05ec-NarrowStyles-headerContent{
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+
+.cache6e734f883e5a972fd8c15f0a7a2b05ec-NarrowStyles-linkFlex{
+  align-self: flex-end;
+}
+
+.cache6e734f883e5a972fd8c15f0a7a2b05ec-NarrowStyles-flexFont{
+  font-size: 4vw;
+}
+}</style><style>.cache6e734f883e5a972fd8c15f0a7a2b05ec-Styles-header{
+  align-items: center;
+  background-color: rgb(61, 79, 93);
+  box-sizing: border-box;
+  display: flex;
+  padding: 20px;
+}
+
+.cache6e734f883e5a972fd8c15f0a7a2b05ec-Styles-headerLinkBox{
+  display: flex;
+  flex: 1;
+  flex-direction: row;
+  text-align: center;
+}
+
+.cache6e734f883e5a972fd8c15f0a7a2b05ec-Styles-headerLink{
+  align-items: center;
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  padding: 10px 10px;
+}
+
+.cache6e734f883e5a972fd8c15f0a7a2b05ec-Styles-footer{
+  color: rgb(158, 167, 174);
+  display: flex;
+  justify-content: center;
+}
+
+.cache6e734f883e5a972fd8c15f0a7a2b05ec-Styles-subtleLink{
+  text-decoration: none;
+}
+</style><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.1.0/highlight.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.1.0/languages/scala.min.js"></script><script>hljs.initHighlightingOnLoad();</script><meta name="viewport" content="initial-scale = 1.0,maximum-scale = 1.0" /><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-27464920-5', 'auto');
+ga('send', 'pageview');
+</script><script>if (window.location.protocol == "https:")
+    window.location.href = "http:" + window.location.href.substring(window.location.protocol.length);
+</script></head><body style="margin: 0px;"><div class=" cache6e734f883e5a972fd8c15f0a7a2b05ec-WideStyles-header cache6e734f883e5a972fd8c15f0a7a2b05ec-NarrowStyles-header cache6e734f883e5a972fd8c15f0a7a2b05ec-Styles-header"><div class=" cache6e734f883e5a972fd8c15f0a7a2b05ec-NarrowStyles-headerContent cache6e734f883e5a972fd8c15f0a7a2b05ec-WideStyles-headerContent"><h1 style="padding: 10px 10px;margin: 0px;"><a style="color: white;font-weight: bold;" href=".." class=" cache6e734f883e5a972fd8c15f0a7a2b05ec-Styles-subtleLink cache6e734f883e5a972fd8c15f0a7a2b05ec-NarrowStyles-flexFont"><i class="fa fa-cogs"></i> Haoyi's Programming Blog</a></h1><div class=" cache6e734f883e5a972fd8c15f0a7a2b05ec-Styles-headerLinkBox cache6e734f883e5a972fd8c15f0a7a2b05ec-NarrowStyles-linkFlex"><div class=" cache6e734f883e5a972fd8c15f0a7a2b05ec-Styles-headerLink"><a href="../post/HelloWorldBlog.html" class=" cache6e734f883e5a972fd8c15f0a7a2b05ec-Styles-subtleLink" style="color: white;"><div><div><i class="fa fa-question-circle"></i></div> About</div></a></div><div class=" cache6e734f883e5a972fd8c15f0a7a2b05ec-Styles-headerLink"><a href="https://lihaoyi.github.io/Resume/" class=" cache6e734f883e5a972fd8c15f0a7a2b05ec-Styles-subtleLink" style="color: white;"><div><div><i class="fa fa-file-text-o"></i></div> Resume</div></a></div><div class=" cache6e734f883e5a972fd8c15f0a7a2b05ec-Styles-headerLink"><a href="https://github.com/lihaoyi" class=" cache6e734f883e5a972fd8c15f0a7a2b05ec-Styles-subtleLink" style="color: white;"><div><div><i class="fa fa-github"></i></div> Github</div></a></div></div></div></div><div class=" cache6e734f883e5a972fd8c15f0a7a2b05ec-WideStyles-content cache6e734f883e5a972fd8c15f0a7a2b05ec-NarrowStyles-content" style="max-width: 900px;"><h1>What's in a Build Tool?</h1><div style="color: #999;margin-bottom: 20px;">Posted <a href="https://github.com/lihaoyi/blog/commit/abba401c95a3d2d79d5caee9c61eb8c794d6d0be">2016-03-04</a></div><p>A "Build tool" is a catch-all term that refers to anything that is needed to get a piece of software set up, but isn't needed after that. Different programming communities have a wealth of different tools: some use stalwarts like <code>make</code>, some use loose collections of <code>.sh</code> scripts, some use XML-based tools like Maven or Ant, JSON-based tools like Grunt, or code-based tools like Gulp, Grunt or SBT.</p>
+<p>Each of these tools does different things and has a different set of trade-offs associated with them. Given all these different designs, and different things each tool does, what are the common features that build tools provide that people want? How to existing tools stack up against the things that people want build tools to do?</p>
+<hr/>
+<p>This post will go through some common use cases for build tools, pick out and discuss common features, see which boxes existing tools check, and discuss their strengths and weaknesses. Hopefully in the process, you'll get a good sense of what the frankenstein "essence" of a build tool really is, and if you ever decide to go and write your own you'll be well prepared.</p>
+<p>I am not an expert in all the tools presented here, so if there are mistakes anywhere in this post, feel free to post a correction in the comments and I'll update the post accordingly!</p><h2 id="at-a-glance">At A Glance</h2>
+<ul>
+  <li><a href="#use-cases-for-build-tools">Use Cases for Build Tools</a>
+    <ul>
+      <li><a href="#production-deployment">Production Deployment</a></li>
+      <li><a href="#continuous-integration">Continuous Integration</a></li>
+      <li><a href="#developer-environments">Developer Environments</a></li>
+    </ul>
+  </li>
+  <li><a href="#common-features-in-build-tools">Common Features In Build Tools</a>
+    <ul>
+      <li><a href="#running-ad-hoc-commands">Running ad-hoc commands</a></li>
+      <li><a href="#knowing-how-to-order-the-execution-of-commands-based-on-dependencies">Knowing how to order the execution of commands based on dependencies</a></li>
+      <li><a href="#caching-command-output-if-its-inputs-dont-change">Caching command output if its inputs don't change</a></li>
+      <li><a href="#parallelize-different-commands">Parallelize different commands</a></li>
+      <li><a href="#watch-for-file-changes-and-running-commands-based-on-them">Watch for file-changes and running commands based on them</a></li>
+      <li><a href="#using-external-processes-including-compilers">Using external processes, including compilers</a></li>
+      <li><a href="#being-used-by-external-processes">Being used by external processes</a></li>
+      <li><a href="#allowing-configuration-re-configuration-re-re-configuration">Allowing configuration, re-configuration, re-re-configuration</a></li>
+      <li><a href="#download-dependencies">Download dependencies</a></li>
+    </ul>
+  </li>
+  <li><a href="#analyzing-build-tools">Analyzing Build Tools</a>
+    <ul>
+      <li><a href="#shell-scripts">Shell Scripts</a></li>
+      <li><a href="#make">Make</a></li>
+      <li><a href="#ant">Ant</a></li>
+      <li><a href="#maven">Maven</a></li>
+      <li><a href="#rake">Rake</a></li>
+      <li><a href="#grunt">Grunt</a></li>
+      <li><a href="#gulp">Gulp</a></li>
+      <li><a href="#sbt">SBT</a></li>
+    </ul>
+  </li>
+  <li><a href="#round-up">Round Up</a></li>
+</ul><h2 id="use-cases-for-build-tools">Use Cases for Build Tools</h2>
+<p>For the purposes of this post, I'm going to draw an arbitrary line and say that build tools are used in</p>
+<ul>
+  <li>
+  <p><a href="#production-deployment">Production Deployment</a>: where you want to set up  the codebase once, stop changing it, and ship the finished product. Whether  you are shipping it to web servers or shipping it on CDs to install on your  customers' laptops.</p></li>
+  <li>
+  <p><a href="#continuous-integration">Continuous Integration</a>: where you are running  a relatively large test suite on a codebase, perhaps once every several  minute, with the code only changing between runs of the suite.</p></li>
+  <li>
+  <p><a href="#developer-environments">Developer Environments</a>: where you are  interactively working and changing a codebase, several times a second, and  want it to execute many small actions (whether manually or via unit tests)  in between modifying the code.</p></li>
+</ul>
+<p>This is arbitrary, but it should encompass a large portion of where people consider using "build tools". For example</p><h3 id="production-deployment">Production Deployment</h3>
+<p>Using a build tool in a production deployment is relatively straightforward: you start off with a clean checkout of the source code, and compile whatever you need and generate whatever files you need in order to create a complete, executable environment. You often don't care how responsive things are because this only happens perhaps once-a-week or once-a-day or once-an-hour, so as long as it doesn't take <em>hours</em> to perform it's fine.</p>
+<p>Nevertheless, the build tool still has a lot of work to do. In particular, it has to:</p>
+<ul>
+  <li>
+  <p>Be able to run arbitrary commands: every deployment scenario is different,  everyone will need files copied to a different folder, zipped in a different  format, or sanitized in a different way.</p></li>
+  <li>
+  <p>Use the results of one command in another: building is almost always a  multi-step process. You may need to:</p></li>
+  <li>
+  <p>Generate source files from some <a href="https://en.wikipedia.org/wiki/Interface_description_language">IDL</a></p></li>
+  <li>Compile your hand-written source files, together with the generated files, to form your executable</li>
+  <li>Pre-process your non-code resources: e.g. generating sprite-sheets or <a href="https://en.wikipedia.org/wiki/Mipmap">mipmaps</a> from images.</li>
+  <li>Collect your executable, along with whatever other files it needs at runtime (images, configuration, music, 3D models, ...) in a folder</li>
+  <li>Compress that folder into whatever format is required (gz, zip, <a href="https://en.wikipedia.org/wiki/MPQ">MPQ</a>, ...)</li>
+</ul>
+<p>You thus have to make sure you perform every step, in order, and feed the  outputs from one command into the inputs of another command that needs them.</p>
+<ul>
+  <li>
+  <p>Allowing configuration, re-configuration, re-re-configuration: you very often  need to build your code for deployment with just-one-slight-change. Also, you  may find yourself having multiple modules that are similar, but each needing  their own custom tweaks to the configuration.</p></li>
+  <li>
+  <p>Using external commands: the build tool virtually never has everything  needed to build and deploy your source code built-in. It will need to shell  out to other programs, perhaps to compile code, manipulate images, compress  files, or other things.</p></li>
+  <li>
+  <p>Being used <em>by</em> external commands: the build tool is never the "only" tool  in town. While it can probably be run directly, inevitably it ends up being  hooked by some other tool: you may have <a href="https://jenkins-ci.org/">Jenkins</a> automatically kick off  build-&amp;-deploys when it gets a tagged commit, a cron job that kicks off a new  build-&amp;-deploy every night, a supervisor process that keeps the build tool  running, among an army of other tools, and restarts it when it falls downs.</p></li>
+  <li>
+  <p>Download dependencies &amp; compile stuff: last of all, the build tool needs to  be able to download your code's dependencies and compile your code.</p></li>
+</ul>
+<p>Naturally, there are always edge cases. For example, Google is famous for performing remote caching of their build artifacts due to how long it takes, while for most smaller codebases you can get away with a clean build every time. Similarly, there are organizations that deploy every commit to production, blurring the line between "Production" and "CI" builds. Nevertheless, the above should describe a relatively typical workload for a "production build".</p><h3 id="continuous-integration">Continuous Integration</h3>
+<p>In <a href="https://en.wikipedia.org/wiki/Continuous_integration">continuous integration</a>, you are running a build-&amp;-test flow across every commit which lands in your repository, and perhaps even for commits that haven't yet landed. You may be using TravisCI, CircleCI, Jenkins, or your own company-internal system to do so.</p>
+<p>The continuous integration (CI) workload is similar to the production deployment workload, but with a few twists:</p>
+<ul>
+  <li>
+  <p>Whatever frequency deployments happen, CI builds often happen 10x or 100x  more frequently</p></li>
+  <li>
+  <p>While deployments tend to happen one at a time, it's not unusual to have CI  builds happening concurrently, with 10s to 100s happening at the same time</p></li>
+  <li>
+  <p>While deployments just involve preparing the code so it can be run, CI  involves running your code against a test suite of some sort.</p></li>
+</ul>
+<p>Thus, the "CI" build often has a different set of requirements than the "production" build: it needs to be faster, since it's happening so often. It needs to be able to isolate its builds from other builds, which may be running different versions of the code on the same cluster or even the same machine.</p>
+<p>Therefore you end up looking for features like:</p>
+<ul>
+  <li>
+  <p>Parallelizing unrelated commands: if you have 8 cores and have multiple  unrelated commands (Compiling <a href="http://sass-lang.com/">SCSS</a>? Compiling Javascript?) that take less  than 8 cores each you can run them in parallel and save some time</p></li>
+  <li>
+  <p>Caching command results: if you're CI build is slow, you may want to avoid  needlessly re-computing parts of it to speed it up. For example, third-party  binaries are often <code>apt-get install</code>ed once and then used for multiple CI  builds, and third-party dependencies from e.g. <a href="http://central.sonatype.org/">Maven Central</a> are often  downloaded once and then kept around.</p></li>
+</ul>
+<p>Not every company's or individual's CI system looks the same; not every company or individual even has CI! Nonetheless, I would argue that this is a relatively representative sample of the kind of workload build-systems get in automated builds.</p><h3 id="developer-environments">Developer Environments</h3>
+<p>Using a build tool in development environments is perhaps the most demanding of the three use cases described. In a development environment, a programmer is actively making changes to the codebase, and then executing code to see if the changes have the effect they want. They could be navigating to a local website in the browser that's running their copy of the code and clicking around, or they could be running a unit test (or a whole suite), or they could be opening a REPL, running code interactively, and inspecting the output there.</p>
+<p>Regardless of how the programmer is running code, the build system needs to get the code ready to run the first time, as well as constantly "updating" the system as the code changes underneath. Any compiled executables may need to be re-compiled, any generated files may need to be re-generated. When the build tool is done updating the system, the programmer should be able to interact with the system as if the code was always in the current state. And the build tool should ideally work in a fraction of a second: after all, the programmer is sitting there waiting for you!</p>
+<p>Given this scenario, these are the features you want your build tool to have, on top of what you already want for CI and Deployment purposes:</p>
+<ul>
+  <li>
+  <p>Caching command results: while in CI this happens sometimes, during local  development this is basically mandatory. Nobody wants to wait 5 minutes for  a clean build just because they added a print statement. Ideally it would  take less than 1s to incrementally build things and bring the system up to  date.</p></li>
+  <li>
+  <p>Parallelizing unrelated commands: for performance. For the same reason as  caching, this is even more important during local development.</p></li>
+  <li>
+  <p>Running commands in response to file changes: this is unique to the local  development workflow. While in Deployment and CI the code being built is  static, here it's constantly changing. Most build systems have some kind  of polling/filesystem-notification based watcher that saves you the hassle  of running "build" every time you save.</p></li>
+</ul><h2 id="common-features-in-build-tools">Common Features In Build Tools</h2>
+<p>From the three primary use cases above, here is the list of things that we could conceivably ask a build system to do:</p>
+<ol>
+  <li><a href="#running-ad-hoc-commands">Running ad-hoc commands</a></li>
+  <li><a href="#knowing-how-to-order-the-execution-of-commands-based-on-dependencies">Knowing how to order the execution of commands based on dependencies</a></li>
+  <li><a href="#caching-command-output-if-its-inputs-dont-change">Caching command output if its inputs don't change</a></li>
+  <li><a href="#parallelize-different-commands">Parallelize different commands</a></li>
+  <li><a href="#watch-for-file-changes-and-running-commands-based-on-them">Watch for file-changes and running commands based on them</a></li>
+  <li><a href="#using-external-processes-including-compilers">Using external processes, including compilers</a></li>
+  <li><a href="#being-used-by-external-processes">Being used by external processes</a></li>
+  <li><a href="#allowing-configuration-re-configuration-re-re-configuration">Allowing configuration, re-configuration, re-re-configuration</a></li>
+  <li><a href="#download-dependencies">Download dependencies</a></li>
+</ol>
+<p>This isn't an exhaustive list, but it should be a pretty good sampling. This section will discuss each of these features in greater detail.</p><h3 id="running-ad-hoc-commands">Running ad-hoc commands</h3>
+<p>The basic requirement here is that you need to be able to run ad-hoc code as part of your build process. The list if things you may want to run are infinite, but includes things like:</p>
+<ul>
+  <li>Generating serialization code from IDL files</li>
+  <li>Wiping the database of the development web-server</li>
+  <li>Running migrations (in either production or development)</li>
+  <li>Packaging and compressing the executable for deployment</li>
+</ul>
+<p>There are a lot of things that you can possibly want to do with your code during a "build" in development, CI, and production. Many of them don't apply at all at runtime: they are purely a concern during developing, building and packaging your code.</p>
+<p>It's possible for this requirement to be satisfied by a bunch of <a href="#shell-scripts">Shell Scripts</a>, used together a simpler build tool which then does not need to do this, but that has its downsides. For example, it means that the build tool is then un-aware of where these commands fit in to the larger scheme of things. For example, if compilation of the "main" codebase depends on the code generated from IDL files, you will then have to manually ensure you run this code-generation script every time the IDL files change.</p><h3 id="knowing-how-to-order-the-execution-of-commands-based-on-dependencies">Knowing how to order the execution of commands based on dependencies</h3>
+<p>The requirement here is that you should be able to take the output of one command and feed it into another command. Furthermore, you should not need to do the feeding yourself: if I have two commands</p>
+<ul>
+  <li><code>commandA</code> depends on <code>commandB</code></li>
+  <li><code>commandB</code> depends on nothing</li>
+</ul>
+<p>I should be able to ask the build tool to run <code>commandA</code>, and it should know that it will need to run <code>commandB</code> first to make it work. Similarly, if I ask it to run <code>commandB</code> alone, it should know not to run <code>commandA</code>.</p>
+<p>In a trivial example it's easy enough to do it manually and remember what order to do things in. But when your build grows, and you have things like:</p>
+<ul>
+  <li><code>test</code> depends on <code>package</code> and any files in the <code>test/</code> folder</li>
+  <li><code>run</code> depends on <code>package</code></li>
+  <li><code>package</code> depends on <code>compile</code> and <code>resources</code></li>
+  <li><code>compile</code> depends on <code>generateIDL</code> and any file in the <code>src/</code> folder</li>
+  <li><code>resources</code> depends on any file in the <code>resources/</code> folder</li>
+</ul>
+<p>Remembering to do the right things in the right order becomes impossible. You will pull down a patch, which will result in 100 files changing throughout the project, and you want to run <code>test</code> while not doing any redundant work since every task in this build may take 10+ seconds, and not <em>forgetting to do any work</em> since stale results from <code>generateIDL</code> or <code>compile</code> or <code>resources</code> will result in obscure hard-to-debug breakages. In this sort of scenario, you would be very thankful if the build tool would do all the book-keeping for you and not make any mistakes!</p><h3 id="caching-command-output-if-its-inputs-dont-change">Caching command output if its inputs don't change</h3>
+<p>This is the other common thing build tools do: they avoid doing redundant work.</p>
+<p>It is easy to have a simple <code>test.sh</code> script that does everything, every time:</p>
+<pre><code class=""># test.sh
+./bundleResources.sh
+./compile.sh
+./package.sh
+./runTests.sh
+</code></pre>
+<p>However, this would end up being very slow if you redundantly kept re-bundling resources and re-compiling code if we didn't need to. The build tool should be able to tell what changed and what didn't, and only do the minimal amount of work necessary.</p>
+<p>This doesn't matter so much for production deployments, since you tend to run "everything", once, and be done with it. But it does matter a lot for people's development environments, where they're constantly making small tweaks and wanting to get back to work as soon as possible without unnecessary waiting.</p><h3 id="parallelize-different-commands">Parallelize different commands</h3>
+<p>If we return to the earlier example-dependency-graph:</p>
+<ul>
+  <li><code>test</code> depends on <code>package</code> and any files in the <code>test/</code> folder</li>
+  <li><code>run</code> depends on <code>package</code></li>
+  <li><code>package</code> depends on <code>compile</code> and <code>resources</code></li>
+  <li><code>compile</code> depends on <code>generateIDL</code> and any file in the <code>src/</code> folder</li>
+  <li><code>resources</code> depends on any file in the <code>resources/</code> folder</li>
+</ul>
+<p>If I haven't done anything, and I ask the build tool to <code>package</code>, it should be able to perform <code>compile</code>/<code>generateIDL</code> and <code>resources</code> in parallel. After all, those two tasks do not depend on each other! In this case it could cut the time I spend waiting in half, and in a larger build with more items the savings would be even greater.</p>
+<p>Again, it doesn't matter as much if you're running the build once a day for deployment. But if you're running it 4 times a minute any unnecessary slowness results in frustration that adds up quickly!</p><h3 id="watch-for-file-changes-and-running-commands-based-on-them">Watch for file-changes and running commands based on them</h3>
+<p>Given this dependency graph:</p>
+<ul>
+  <li><code>test</code> depends on <code>package</code> and any files in the <code>test/</code> folder</li>
+  <li><code>run</code> depends on <code>package</code></li>
+  <li><code>package</code> depends on <code>compile</code> and <code>resources</code></li>
+  <li><code>compile</code> depends on <code>generateIDL</code> and any file in the <code>src/</code> folder</li>
+  <li><code>resources</code> depends on any file in the <code>resources/</code> folder</li>
+</ul>
+<p>If I edit a file in my hypothetical <code>src/</code> directory, and I'm currently doing a <code>run</code>, I want it to automatically re-<code>compile</code>, re-<code>package</code> and re-<code>run</code> without me having to flip over to the terminal and do stuff manually.</p>
+<p>This can be done at a coarse grain, with sufficiently smart caching: if any file changes, re-do "everything", and let the caching do the work of figuring out which tasks don't <em>actually</em> need to be re-done. On the other hand, finer grained file-watching (kicking off different commands based on different files) would speed thing up over that coarse grained analysis: you wouldn't need to repeatedly check dozens of caches for invalidation, and can instead just do the small amount of work you know you need to do.</p><h3 id="using-external-processes-including-compilers">Using external processes, including compilers</h3>
+<p>As builds grow, they tend to require all sorts of things that are not part of the build tool:</p>
+<ul>
+  <li>
+  <p>Compilers, which often live outside the build-tool. Often a build tool may  bundle the compiler for that community's language, e.g. <a href="#maven">Maven</a>  bundles Javac or SBT bundles Scalac. But as the build grows, it may end up  containing a half dozen different compilers, e.g. for Java, for SCSS, for  Javascript ES6, for <code>.proto</code> or <code>.thrift</code> files. At some point these will  end up being external</p></li>
+  <li>
+  <p>Packagers: whether simple things like <code>gzip</code> or <code>zip</code>, or just <code>cp</code>-ing  things into a folder, or running Java bytecode through <a href="http://proguard.sourceforge.net/">Proguard</a> and  Javascript through <a href="https://github.com/mishoo/UglifyJS">UglifyJS</a>.</p></li>
+</ul>
+<p>There are many other things that a build-tool will end up needing, too many for it to contain them all. A build tool thus should be able to work easily with external programs, even those it has no knowledge of, and integrate them into it's build.</p><h3 id="being-used-by-external-processes">Being used by external processes</h3>
+<p>A build tool is rarely the be-all end-all of building the project. Inevitably it ends up being used by other tools:</p>
+<ul>
+  <li>
+  <p>Your CI system: TravisCI, CircleCI, Jenkins, etc. all want to ask your  build tool to do things</p></li>
+  <li>
+  <p>Your IDEs: IntelliJ, Eclipse, etc. all would like to extract project  information from your build tool.</p></li>
+  <li>
+  <p>A larger developer environment, with its own supervisor process and triggers,  that ends up managing your build tool as one of many</p></li>
+</ul>
+<p>In all these cases, the requirements are relatively straightforward: you need your build-tool to be accessible programmatically. Whether it's being able to programmatically run tasks or programmatically inspect the layout of the project, it needs to be doable from an external process relatively efficiently and easily.</p><h3 id="allowing-configuration-re-configuration-re-re-configuration">Allowing configuration, re-configuration, re-re-configuration</h3>
+<p>Builds are probably some of the most configurable pieces of software. It is not uncommon to have "just one tweak" you want to control using a flag, and needing that flag to get propagated throughout the build into multiple sub-processes (e.g. compilers, packagers). Examples include:</p>
+<ul>
+  <li>Using different compression formats: <code>.gz</code> on linux, <code>.zip</code> on windows?</li>
+  <li>Compiling for different processors: ARM vs x86?</li>
+  <li>Debug builds: debug symbols enabled? Profiling? Optimizations enabled?</li>
+  <li>Enabling/disabling features: "Home" edition vs "Professional" vs "Enterprise"</li>
+</ul>
+<p>There's a lot that you could want to configure in a build, and a build tool needs to let you configure it in a reasonable way.</p><h3 id="download-dependencies">Download dependencies</h3>
+<p>Lastly, a build tool should be able to do the language-specific work of downloading dependencies. As mentioned earlier, the compiler is often just another executable that the build tool shells out to, but the dependency management is often language-specific. While there are attempts to make generic, language agnostic dependency management systems like Nix, or <code>apt-get</code> or <code>yum</code> on various linuxes, for many people working within a single Java, Node.js or Python program, it's more likely you'll be getting the bulk of your dependencies from your respective Maven Central, npm, or PyPI repositories.</p>
+<p>Traditionally, a you needed to install these dependencies manually beforehand, e.g.</p>
+<pre><code class="">sudo pip install requests
+sudo pip install Pillow
+sudo pip install numpy
+sudo pip install SQLAlchemy
+sudo pip install six
+sudo pip install simplejson
+python test.py
+</code></pre>
+<p>and running your program without doing so would result in arbitrary <code>ImportError</code>s. And as the dependencies change, you would need to make sure to run the right command to install the new stuff, or you're going to be back to <code>ImportError</code>s again!</p>
+<p>With a build-tool managing this, you would do something like</p>
+<pre><code class="">sbt test
+</code></pre>
+<p>Where and it would automatically pull down everything necessary for the project to be tested the first time, and not bother doing so the second and subsequent times.</p><h2 id="analyzing-build-tools">Analyzing Build Tools</h2>
+<p>In this part of the post, I will go over a selection of build tools I've seen. I am not deeply familiar to all of them, so there may be mistakes</p>
+<p>This is not a comprehensive listing, but it will give a sense of how build tools across a variety of languages and communities fare against the requirements we listed above.</p>
+<ul>
+  <li><a href="#shell-scripts">Shell Scripts</a></li>
+  <li><a href="#make">Make</a></li>
+  <li><a href="#ant">Ant</a></li>
+  <li><a href="#maven">Maven</a></li>
+  <li><a href="#rake">Rake</a></li>
+  <li><a href="#grunt">Grunt</a></li>
+  <li><a href="#gulp">Gulp</a></li>
+  <li><a href="#sbt">SBT</a></li>
+</ul>
+<p>Note that this list is in no way exhaustive; in particular, it focuses a lot more on "language" build tools: for building application code, in one or a small number of languages. In particular, it ignores a number of other similar tools that can be classified as "build tools", e.g.</p>
+<ul>
+  <li>Language-"agnostic" build tools like Twitter's <a href="https://pantsbuild.github.io/">Pants</a>, Facebook's <a href="https://buckbuild.com/">Buck</a> or  Google's <a href="http://bazel.io/">Bazel</a></li>
+  <li>System-provisioning tools, like <a href="https://puppetlabs.com/puppet/what-is-puppet">Puppet</a> or <a href="http://saltstack.com/">Salt</a> or <a href="https://www.ansible.com/">Ansible</a></li>
+</ul>
+<p>These other tools are just as valid considerations as those above, and I just leave them out for brevity. Perhaps in a future blog post I can cover these cases!</p><h3 id="shell-scripts">Shell Scripts</h3>
+<pre><code class="bash">sudo su
+
+# install a whole lot of stuff
+apt-get install --force-yes openssh-server
+apt-get install --force-yes ack-grep
+
+apt-get install --force-yes openjdk-7-jdk
+apt-get install --force-yes vim
+apt-get install --force-yes git
+apt-get install --force-yes zip
+
+# setup samba share
+apt-get install --force-yes samba
+cat &lt;&lt;EOF &gt;&gt; /etc/samba/smb.conf
+[HostShare]
+   path = /
+   guest ok = yes
+   public = yes
+   writable = yes
+   force user = lihaoyi
+EOF
+restart smbd
+
+exit
+</code></pre>
+<p>These are probably the first "build tool" that you will bump up against: after setting things up manually the first time, the obvious next step is to put the setup into a shell script so you can run it over and over. At some point, it might grow into a collection of shell scripts, or even a Python script, but the overall setup doesn't change: you have a collection of commands that are run every time you want to do something.</p>
+<p>So how does that stack up against the requirements I described above?</p>
+<ol>
+  <li>
+  <p><a href="#running-ad-hoc-commands">Running ad-hoc commands</a>: <strong>Good</strong>. You can  kick off basically any command you could imagine, from anywhere in the  script, with minimal fuss.</p></li>
+  <li>
+  <p><a href="#knowing-how-to-order-the-execution-of-commands-based-on-dependencies">Knowing how to order the execution of commands based on dependencies</a>:  <strong>Poor</strong>. Loose scripts tend to "just do things", and dependencies between  the things they're doing is implicit. If you put things in the wrong order,  things just fail in ad-hoc ways.</p></li>
+  <li>
+  <p><a href="#caching-command-output-if-its-inputs-dont-change">Caching command output if its inputs don't change</a>: <strong>Poor</strong>. It's  relatively annoying to make loose scripts properly cache things and avoid  redundant work. It's definitely possible, e.g. by having code that <code>mtime</code>s  every source file before determining whether or not to recompile, but it's  hard to get right and often not done at all.</p></li>
+  <li>
+  <p><a href="#parallelize-different-commands">Parallelize different commands</a>: <strong>Okay</strong>: It's easy to parallelize  things in loose scripts, even if it's not done automatically. If you <em>know</em>  that two commands can happen independently, you can easily parallelize them  using Bash's <code>&amp;</code> syntax</p></li>
+  <li>
+  <p><a href="#watch-for-file-changes-and-running-commands-based-on-them">Watch for file-changes and running commands based on them</a>: <strong>Poor</strong>.  Loose scripts just don't do this by default. You could hack something  together using Watchman or Watchdog, but it's a pain to get right</p></li>
+  <li>
+  <p><a href="#using-external-processes-including-compilers">Using external processes, including compilers</a>: <strong>Good</strong>. It's really  easy to kick off external processes in a shell script.</p></li>
+  <li>
+  <p><a href="#being-used-by-external-processes">Being used by external processes</a>: <strong>Good</strong>. It's equally easy to kick  off shell scripts from external processes.</p></li>
+  <li>
+  <p><a href="#allowing-configuration-re-configuration-re-re-configuration">Allowing configuration, re-configuration, re-re-configuration</a>:  <strong>Okay</strong>. You can reconfigure things and through environment variables and  have them automatically propagate everywhere. It's not <em>great</em>, but it's  not any worse than anything else in shell-script-land</p></li>
+  <li>
+  <p><a href="#download-dependencies">Download dependencies</a>: <strong>Poor</strong>. You can hard-code it, but it's just as  likely to either fall out of sync because you didn't download enough, or  become really slow when you download too many.</p></li>
+</ol>
+<p>In general, shell scripts do an OK job at being a build tool, but not great. Their great advantage is their convenience: really easy to get started, really easy to start using other tools or to be used from other tools, and can even (surprisingly?) let you parallelize parts of your build acceptably, if manually. On the other hand, they don't have a model of "what depends on what" inside your build, and so do a lousy job at ensuring things are run in the right order, or ensuring you aren't doing redundant work.</p><h3 id="make">Make</h3>
+<pre><code class="make">all: hello
+
+hello: main.o factorial.o hello.o
+    g++ main.o factorial.o hello.o -o hello
+
+main.o: main.cpp
+    g++ -c main.cpp
+
+factorial.o: factorial.cpp
+    g++ -c factorial.cpp
+
+hello.o: hello.cpp
+    g++ -c hello.cpp
+
+clean:
+    rm *o hello
+
+</code></pre>
+<p>Make is a 40 year old build automation tool from the Unix/C tradition. It lets you define multiple shell commands you can do, but more than that it lets you define the inputs and output for each command as a sequence of files. For each of the bullets above, the word before the <code>:</code> (e.g. <code>hello</code>) is the label of the command, and the files after are the files or targets which that command depends on.</p>
+<p>That means that if you run <code>hello</code>, it will ensure that <code>main.o</code>, <code>factorial.o</code> and <code>hello.o</code> are all pre-compiled before it links them all into <code>hello</code>. Furthermore, if the timestamps on the already-generated files are more recent than that of the source files, they will be re-used and re-compilation will be avoided.</p>
+<p>So how does that stack up against the requirements I described above?</p>
+<ol>
+  <li>
+  <p><a href="#running-ad-hoc-commands">Running ad-hoc commands</a>: <strong>Good</strong>. Make rules are literally ad-hoc  commands, and you can make a rule do anything as long as it generates  files on the filesystem somewhere</p></li>
+  <li>
+  <p><a href="#knowing-how-to-order-the-execution-of-commands-based-on-dependencies">Knowing how to order the execution of commands based on dependencies</a>:  <strong>Okay</strong>. The dependencies between targets is specified, but there's nothing  ensuring that it matches up with the <em>real</em> dependencies of each target.  It's up to the programmer to "know" what the dependencies and outputs of  each target is: this both results in some duplication (need to specify  input files as args to each command, as well as the same files as  dependencies of the target) as well ask risk you'll mess up. Still, it's  far better than Bash</p></li>
+  <li>
+  <p><a href="#caching-command-output-if-its-inputs-dont-change">Caching command output if its inputs don't change</a>: <strong>Good</strong>. Assuming  you got the dependencies right, Make does this transparently by default</p></li>
+  <li>
+  <p><a href="#parallelize-different-commands">Parallelize different commands</a>: <strong>Okay</strong>: There's no automatic way to  parallelize different targets, though you can still parallelize a single  target using Bash.</p></li>
+  <li>
+  <p><a href="#watch-for-file-changes-and-running-commands-based-on-them">Watch for file-changes and running commands based on them</a>: <strong>Poor</strong>.  Make doesn't do this</p></li>
+  <li>
+  <p><a href="#using-external-processes-including-compilers">Using external processes, including compilers</a>: <strong>Good</strong>. Make files are  all about kicking off external processes</p></li>
+  <li>
+  <p><a href="#being-used-by-external-processes">Being used by external processes</a>: <strong>Good</strong>. <code>make target</code> is easy to  run</p></li>
+  <li>
+  <p><a href="#allowing-configuration-re-configuration-re-re-configuration">Allowing configuration, re-configuration, re-re-configuration</a>:  <strong>Okay</strong>. You can reconfigure things using environment variables like Bash,  as well as through macros, or passing arguments to <code>make</code>, but it's  sufficiently annoying that many people use Autoconf to write out  machine-generated make files instead.</p></li>
+  <li>
+  <p><a href="#download-dependencies">Download dependencies</a>: <strong>Poor</strong>. It usually ends up being punted to  other tools like <code>./configure</code></p></li>
+</ol>
+<p>In practice, this fixes two large problems with Bash Scripts - the dependency execution order and caching - while still being relatively close to what Bash in most other ways. It integrates trivially with third party programs, and often you can take whatever you would have run at the command-line and paste it directly into a make target. Nevertheless, many of the other problems still remain, and you get the additional annoyance of working with its own, strange syntax.</p><h3 id="ant">Ant</h3>
+<pre><code class="xml">&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;project name=&quot;Hello&quot; default=&quot;compile&quot;&gt;
+    &lt;target name=&quot;clean&quot; description=&quot;remove intermediate files&quot;&gt;
+        &lt;delete dir=&quot;classes&quot;/&gt;
+    &lt;/target&gt;
+    &lt;target name=&quot;clobber&quot; depends=&quot;clean&quot; description=&quot;remove all artifact files&quot;&gt;
+        &lt;delete file=&quot;hello.jar&quot;/&gt;
+    &lt;/target&gt;
+    &lt;target name=&quot;compile&quot; description=&quot;compile the Java source code to class files&quot;&gt;
+        &lt;mkdir dir=&quot;classes&quot;/&gt;
+        &lt;javac srcdir=&quot;.&quot; destdir=&quot;classes&quot;/&gt;
+    &lt;/target&gt;
+    &lt;target name=&quot;jar&quot; depends=&quot;compile&quot; description=&quot;create a Jar file for the application&quot;&gt;
+        &lt;jar destfile=&quot;hello.jar&quot;&gt;
+            &lt;fileset dir=&quot;classes&quot; includes=&quot;**/*.class&quot;/&gt;
+            &lt;manifest&gt;
+                &lt;attribute name=&quot;Main-Class&quot; value=&quot;HelloProgram&quot;/&gt;
+            &lt;/manifest&gt;
+        &lt;/jar&gt;
+    &lt;/target&gt;
+&lt;/project&gt;
+</code></pre>
+<p><a href="http://ant.apache.org/">Ant</a> scripts are basically isomorphic to shell scripts: they are effectively shell scripts with an XML syntax implemented in Java, but function more or less identically: you run <code>target</code>s with the XML (equivalent to bash functions) and it executes the commands within from top to bottom.</p>
+<p>Ant has the following main differences from shell scripts</p>
+<ul>
+  <li>It's all XML, and is several times more verbose than Bash commands</li>
+  <li>It's cross platform Java, which means it runs on Windows with Java installed</li>
+  <li>You can specify that a target depends on another target, similar to  <a href="#make">make</a></li>
+</ul>
+<p>It's almost like a make-file, converted into XML, running on the Java Virtual Machine rather than using Unix shell commands. The task-execution model is similar to Make, and the innards of each command is similar to Bash, just converted into a verbose XML syntax.</p>
+<p>You also gain the ability to run "anywhere with Java", but lose the ability to run "anywhere with Unix", so overall the cross-platform-ness of Ant scripts isn't as much a gain as a sideways-change. It allows usage by some new developers (e.g. those on Windows) at the expense of others (those on Unix without a JVM).</p><h3 id="maven">Maven</h3>
+<pre><code class="xml">&lt;project&gt;
+  &lt;!-- model version is always 4.0.0 for Maven 2.x POMs --&gt;
+  &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+
+  &lt;!-- project coordinates, i.e. a group of values which
+       uniquely identify this project --&gt;
+
+  &lt;groupId&gt;com.mycompany.app&lt;/groupId&gt;
+  &lt;artifactId&gt;my-app&lt;/artifactId&gt;
+  &lt;version&gt;1.0&lt;/version&gt;
+
+  &lt;!-- library dependencies --&gt;
+
+  &lt;dependencies&gt;
+    &lt;dependency&gt;
+
+      &lt;!-- coordinates of the required library --&gt;
+
+      &lt;groupId&gt;junit&lt;/groupId&gt;
+      &lt;artifactId&gt;junit&lt;/artifactId&gt;
+      &lt;version&gt;3.8.1&lt;/version&gt;
+
+      &lt;!-- this dependency is only used for running and compiling tests --&gt;
+
+      &lt;scope&gt;test&lt;/scope&gt;
+
+    &lt;/dependency&gt;
+  &lt;/dependencies&gt;
+&lt;/project&gt;
+</code></pre>
+<p><a href="https://maven.apache.org/">Maven</a> is another build tool from the Java community. While it's XML-based like Ant, that's where the similarity ends.</p>
+<p>Rather than describing a build as a sequence of commands to run in response to each named target, Maven describes your build as a set of <em>modules</em>. Each module lists out metadata such as:</p>
+<ul>
+  <li>It's coordinates: it's name, groupId (i.e. author's ID) and version</li>
+  <li>It's dependencies, whether local or external</li>
+</ul>
+<p>Along with a list of <em>phases</em></p>
+<ol>
+  <li>validate</li>
+  <li>generate-sources</li>
+  <li>process-sources</li>
+  <li>generate-resources</li>
+  <li>process-resources</li>
+  <li>compile</li>
+  <li>process-test-sources</li>
+  <li>process-test-resources</li>
+  <li>test-compile</li>
+  <li>test</li>
+  <li>package</li>
+  <li>install</li>
+  <li>deploy</li>
+</ol>
+<p>You run commands via</p>
+<pre><code class="">mvn test
+</code></pre>
+<p>Which automatically will run all necessary phases in all modules up to the <code>test</code> phase, which will run the unit tests for you.</p>
+<p>You can also run tests for a single module</p>
+<pre><code class="">mvn -pl submodule test
+</code></pre>
+<p>Which will run all phases in the <code>submodule</code> submodule, as well as all modules that it depends on, before running its tests.</p>
+<p>In general, if you have a task that you want to do that does not fit into the default set of phases, you need to write a Maven Plugin to do so.</p>
+<p>There's a lot more to Maven than can be described in a few paragraphs, but overall how does it fare against the list of features we decided we wanted in a build tool?</p>
+<ol>
+  <li>
+  <p><a href="#running-ad-hoc-commands">Running ad-hoc commands</a>: <strong>Poor</strong>. Maven actually makes it relatively  clunky to have an extra phase to "do something" that's not part of the  default. You have to go through the rigmarole of defining a plugin and then  using the plugin in your build, which is no-where near as convenient as  writing an ad-hoc shell script to do something.</p></li>
+  <li>
+  <p><a href="#knowing-how-to-order-the-execution-of-commands-based-on-dependencies">Knowing how to order the execution of commands based on dependencies</a>:  <strong>Good</strong>. Maven knows what the order of commands is and can ensure it runs  all the phases necessary before running the phase you want. You won't find  yourself running <code>mvn test</code> and having it crash because you forgot to run  some other command earlier.</p></li>
+  <li>
+  <p><a href="#caching-command-output-if-its-inputs-dont-change">Caching command output if its inputs don't change</a>: <strong>Good</strong>. Maven does  this.</p></li>
+  <li>
+  <p><a href="#parallelize-different-commands">Parallelize different commands</a>: <strong>Good</strong>. Maven didn't let you do this  originally, but in Maven 3 the ability to run builds in parallel appeared:</p></li>
+</ol>
+<p><code>
+   mvn -T 4 install -- will use 4 threads
+   mvn -T 1C install -- will use 1 thread per available CPU core
+</code></p>
+<ol>
+  <li>
+  <p><a href="#watch-for-file-changes-and-running-commands-based-on-them">Watch for file-changes and running commands based on them</a>: <strong>Okay</strong>.  Maven doesn't do this by default, but there's a Maven Plugin that does it  for you without too much difficulty in  https://github.com/rzymek/watcher-maven-plugin. It doesn't let you run  arbitrary goals when things change, but at least you can <code>watcher:run</code></p></li>
+  <li>
+  <p><a href="#using-external-processes-including-compilers">Using external processes, including compilers</a>: <strong>Okay</strong>. Maven comes  with the Java compiler built-in, but doing anything else requires custom  plugin code. It's not hard to write, but definitely less convenient than  invoking something from Bash.</p></li>
+  <li>
+  <p><a href="#being-used-by-external-processes">Being used by external processes</a>: <strong>Good</strong>. Maven's "dumb" XML config  means that it's easy for third-party IDEs like IntelliJ to inspect the build  and know how a project is laid out</p></li>
+  <li>
+  <p><a href="#allowing-configuration-re-configuration-re-re-configuration">Allowing configuration, re-configuration, re-re-configuration</a>:  <strong>Good</strong>. Maven supports <a href="https://maven.apache.org/pom.html#Inheritance">POM Inheritance</a>, allowing you to configure things  once and re-use the configuration, with tweaks, in multiple modules.</p></li>
+  <li>
+  <p><a href="#download-dependencies">Download dependencies</a>: <strong>Good</strong>. Maven does this automatically, and  treats remote dependencies the same as it does local dependencies. You  shouldn't ever need to worry about manually downloading or installing <code>.jar</code>  files when dealing with Maven projects.</p></li>
+</ol><h3 id="rake">Rake</h3>
+<pre><code class="ruby">task :build_refact =&gt; [:clean] do
+  target = SITE_DIR + &#39;refact/&#39;
+  mkdir_p target, QUIET
+  require &#39;refactoringHome&#39;
+  OutputCapturer.new.run {run_refactoring}
+end
+
+file &#39;build/dev/rake.html&#39; =&gt; &#39;dev/rake.xml&#39; do |t|
+  require &#39;paper&#39;
+  maker = PaperMaker.new t.prerequisites[0], t.name
+  maker.run
+end
+</code></pre>
+<p><a href="http://rake.rubyforge.org/">Rake</a> is a contraction of "Ruby Make", and its overall structure is very similar to that of a <a href="#make">Makefile</a>: you define tasks, each one "doing something", and define the dependencies between them. Once that's done, you can run individual tasks using the <code>rake</code> executable similar to how you run Makefile targets using <code>make</code>.</p>
+<p>The primary differences from Make arise from the fact that your tasks are defined in Ruby rather than in its own ad-hoc language.</p>
+<ul>
+  <li>
+  <p>This introduces some syntactic cruft (e.g. needing <code>&#39;</code> quotes around file  names, <code>:</code>s before each task name, or <code>do</code> <code>end</code>s everywhere) and removes  some (no more problems with tabs vs spaces, or file-names with spaces in  them!).</p></li>
+  <li>
+  <p>You get a more advanced language if you want to perform "real logic" in your  rake files. In Make, any "real logic" involved in a single target would  traditionally be punted into separate scripts the Makefile calls. On the  other hand, "real logic" involving <em>the entire build</em> does not have such a  convenient way to encapsulate it, and often people resort to having a  separate script that generates a makefile to execute. With Rake, all this  logic can comfortably live in the same Rakefile, in the same language as  the rest of your build</p></li>
+</ul>
+<p>In addition to these things, the Ruby world has standardized on the <code>gem</code> tool for pulling down dependencies, so although it's not strictly part of Rake (it used to be) for all intents and purposes the "downloading dependencies" problem is solved for people using Rake in Ruby codebases</p>
+<p>Overall, the main contribution Rake makes to the space of build tools is the idea that your build tool can be in a real, concise, high-level programming language. When programs were written in C or Java, code is so verbose that it seems unreasonable to write your build rules in C or Java. As a result, you'd rather invent your own syntax like Make, write everything in XML like Ant or Maven, or just rely on loose collections of shell scripts to do what you want.</p>
+<p>Rake shows that with Ruby, you can in fact have a full-blown programming language inside your build tool, while still being almost (though not quite) as concise as your own hand-crafted syntax, and still getting all the "nice" dependency-tracking and other features that traditional custom build-languages or build-XML-files provided.</p><h3 id="grunt">Grunt</h3>
+<pre><code class="js">module.exports = function(grunt) {
+
+  grunt.initConfig({
+    jshint: {
+      files: [&#39;Gruntfile.js&#39;, &#39;src/**/*.js&#39;, &#39;test/**/*.js&#39;],
+      options: {
+        globals: {
+          jQuery: true
+        }
+      }
+    },
+    watch: {
+      files: [&#39;&lt;%= jshint.files %&gt;&#39;],
+      tasks: [&#39;jshint&#39;]
+    }
+  });
+
+  grunt.loadNpmTasks(&#39;grunt-contrib-jshint&#39;);
+  grunt.loadNpmTasks(&#39;grunt-contrib-watch&#39;);
+
+  grunt.registerTask(&#39;default&#39;, [&#39;jshint&#39;]);
+
+};
+</code></pre>
+<p><a href="http://gruntjs.com/">Grunt</a> is pretty similar to Maven in its overall structure: you pass in an almost-dumb-struct to the <code>grunt.initConfig</code> function, and that configures the entire build telling it where files are, what sources need to be compiled, where the output should go, what files it needs to watch, and so on. It's not <em>quite</em> a dumb struct, as you end up having some simple logic e.g. the <code>&#39;&lt;%= jshint.files %&gt;&#39;</code> string above, which will get evaluated based on the value of the <code>jshint.files</code> configuration option.</p>
+<p>Like Maven, and unlike Ant or Make or Shell Scripts, a Grunt build doesn't contain imperative code. All the code that actually does the work of dealing with files or shelling out the <code>jshint</code> is pushed to plugins, e.g. <code>grunt-contrib-jshint</code> and <code>grunt-contrib-watch</code> above, and the "main" build configuration only deals with configuring these plugins.</p>
+<p>So how does that stack up against the requirements I described above?</p>
+<ol>
+  <li>
+  <p><a href="#running-ad-hoc-commands">Running ad-hoc commands</a>: <strong>Okay</strong>. While most plugins work via the  configuration passed in through <code>grunt.initConfig</code>, you can also write  custom tasks via <code>grunt.registerTask</code> to do ad-hoc work.</p></li>
+  <li>
+  <p><a href="#knowing-how-to-order-the-execution-of-commands-based-on-dependencies">Knowing how to order the execution of commands based on dependencies</a>:  <strong>Poor</strong>. While grunt lets you define tasks, you <a href="https://github.com/gruntjs/grunt/issues/968">cannot define  dependencies</a> like you can in  Make or Rake, nor does Grunt have a standardized-lifecycle like Maven  that would allow you to make sure things run "in the right order" via their  placement in the lifecycle.</p></li>
+  <li>
+  <p><a href="#caching-command-output-if-its-inputs-dont-change">Caching command output if its inputs don't change</a>: <strong>Poor</strong>. Grunt  doesn't provide any support for caching by default. It's left to the  individual plugins to do their own caching and avoid redundant work.</p></li>
+  <li>
+  <p><a href="#parallelize-different-commands">Parallelize different commands</a>: <strong>Poor</strong>: Grunt doesn't run things in  parallel. There are plugins that attempt to do this, but none of them are  widespread or ubiquitous</p></li>
+  <li>
+  <p><a href="#watch-for-file-changes-and-running-commands-based-on-them">Watch for file-changes and running commands based on them</a>: <strong>Good</strong>.  Grunt doesn't do this either, but unlike the plugins for parallelizing  tasks, the <code>grunt-contrib-watch</code> plugin is pretty ubiquitous. Everyone is  using it, and it works.</p></li>
+  <li>
+  <p><a href="#using-external-processes-including-compilers">Using external processes, including compilers</a>: <strong>Poor</strong>. You need to  write grunt plugins for all the various external processes you want to kick  off.</p></li>
+  <li>
+  <p><a href="#being-used-by-external-processes">Being used by external processes</a>: <strong>Good</strong>. Calling <code>grunt foo</code> is  easy and fast.</p></li>
+  <li>
+  <p><a href="#allowing-configuration-re-configuration-re-re-configuration">Allowing configuration, re-configuration, re-re-configuration</a>:  <strong>Good</strong>. While you can't easily write Javascript code to <em>do things</em> in  your grunt build, it is pretty easy to use Javascript code to <em>configure  things</em>. The <code>grunt.initConfig</code> function is just a Javascript call, and you  can perform whatever logic you want to configure and re-configure the build  before you pass it to Grunt.</p></li>
+  <li>
+  <p><a href="#download-dependencies">Download dependencies</a>: <strong>Good</strong>. Perhaps not by virtue of Grunt, but  most people using Grunt are using Javascript which has NPM, which does a  decent job at downloading dependencies.</p></li>
+</ol>
+<p>Grunt Is both similar and different from the tools we saw earlier. It provides the ability to define ad-hoc tasks like Ant/Make/Rake, while at the same time providing a "Build Config" structure similar to what you have in Maven where all your config lives in one XML tree.</p>
+<p>Unlike Ant/Make/Rake, Grunt does not allow you to easily define dependencies between tasks. Thus even if you-as-a-programmer <em>know</em> that <code>taskA</code> depends on <code>taskB</code>, Grunt only allows you to fail-if-<code>taskB</code>-is-not-run via <code>this.requires(&#39;taskB&#39;)</code>, and doesn't support running <code>taskB</code> automatically. The tasks and plugins also do not fit into any sort of standard "lifecycle" like they do in Maven, which would have allowed coarse-grained ordering.</p>
+<p>Like <a href="#rake">Rake</a>, you can define ad-hoc tasks and perform build configuration in a high-level language (Javascript) rather than XML or some custom syntax. Grunt is also probably one of the earlier build systems that supports the "live" watch-files-and-run-tasks workflow, avoiding needing to keep re-running <code>grunt</code> commands manually while you work.</p><h3 id="gulp">Gulp</h3>
+<pre><code class="js">gulp.task(&#39;less&#39;, function () {
+  return gulp.src(&#39;./client/styles/*.less&#39;)
+    .pipe(less({paths: [path.join(__dirname, &#39;client&#39;, &#39;styles&#39;)]}))
+    .pipe(gulp.dest(&#39;./dist/styles&#39;))
+    .pipe(refresh());
+});
+
+gulp.task(&#39;clean&#39;, function () {
+  return gulp.src(&#39;./client/.index.js&#39;, { read: false })
+    .pipe(clean());
+});
+
+gulp.task(&#39;emberate&#39;, [&#39;clean&#39;], function () {
+  return emberate(&#39;./client&#39;, { pods: true })
+    .pipe(source(&#39;.index.js&#39;))
+    .pipe(gulp.dest(&#39;./client&#39;));
+});
+
+gulp.task(&#39;browserify&#39;, [&#39;emberate&#39;], function () {
+  return browserify(&#39;./client/.index.js&#39;)
+    .bundle()
+    //Pass desired output filename to vinyl-source-stream
+    .pipe(source(&#39;application.js&#39;))
+    // Start piping stream to tasks!
+    .pipe(gulp.dest(&#39;./dist/scripts/&#39;))
+    .pipe(refresh());
+});
+
+gulp.task(&#39;watch&#39;, function () {
+  gulp.watch(&#39;./client/styles/*.less&#39;, [&#39;less&#39;]);
+  gulp.watch(&#39;./client/**/*.{js,hbs}&#39;, [&#39;browserify&#39;]);
+});
+
+gulp.task(&#39;default&#39;, [&#39;less&#39;, &#39;browserify&#39;, &#39;watch&#39;]);
+</code></pre>
+<p><a href="http://gulpjs.com/">Gulp</a> is a popular alternative to Grunt in the Javascript build landscape. Rather than having the triple of Config/Plugins/Tasks, Gulp basically <em>only</em> has Tasks. Like Rake, tasks are defined via a <code>task()</code> function, which takes a task name, a function that the task executes, and optionally a list of dependencies that the task requires.</p>
+<p>There are two main novelties to Gulp:</p>
+<ul>
+  <li>
+  <p><strong>Tasks return things</strong>! Almost all build systems up to this point have had  some notion of a "task", but interaction between build steps was ad-hoc: you  would write a file to a path, and some other task would read it. In Gulp, the  tasks return (asynchronous) handles to the files they generate. That allows  downstream tasks to know when a task is really-truly complete and its results  are ready to be used.</p></li>
+  <li>
+  <p><strong><code>.pipe</code> allows you to anonymously combine build steps</strong>. While many build  systems allowed you to define chain multiple steps together, you always had  to define one task per-step-you-want-to-chain. With Gulp, you can easily take  the output from a task and put it through another step, without needing to  manually define any intermediate names.</p></li>
+</ul>
+<p>So how does that stack up against the requirements I described above?</p>
+<ol>
+  <li>
+  <p><a href="#running-ad-hoc-commands">Running ad-hoc commands</a>: <strong>Okay</strong>. You can run arbitrary code, but you  need to provide a specific interface if you want it to fit into Gulp's  <code>.pipe</code>s.</p></li>
+  <li>
+  <p><a href="#knowing-how-to-order-the-execution-of-commands-based-on-dependencies">Knowing how to order the execution of commands based on dependencies</a>:  <strong>Good</strong>. In Gulp, not only do top-level tasks allow you to specify  dependencies, <em>within</em> a task you can easily use <code>.pipe</code> to make sure that  things happen in the correct order and that the different steps all  hook up properly and read/write files from the same places</p></li>
+  <li>
+  <p><a href="#caching-command-output-if-its-inputs-dont-change">Caching command output if its inputs don't change</a>: <strong>Poor</strong>. Gulp  doesn't provide any support for caching by default. It's left to the  individual plugins to do their own caching and avoid redundant work.</p></li>
+  <li>
+  <p><a href="#parallelize-different-commands">Parallelize different commands</a>: <strong>Poor</strong>: Grunt doesn't run things in  parallel. There are plugins that attempt to do this, but none of them are  widespread or ubiquitous.</p></li>
+  <li>
+  <p><a href="#watch-for-file-changes-and-running-commands-based-on-them">Watch for file-changes and running commands based on them</a>: <strong>Good</strong>.  Gulp has built-in the ability to watch files and run tasks when they change.</p></li>
+  <li>
+  <p><a href="#using-external-processes-including-compilers">Using external processes, including compilers</a>: <strong>Okay</strong>. You need to  write gulp plugins for all the various external processes you want to kick  off.</p></li>
+  <li>
+  <p><a href="#being-used-by-external-processes">Being used by external processes</a>: <strong>Good</strong>.</p></li>
+  <li>
+  <p><a href="#allowing-configuration-re-configuration-re-re-configuration">Allowing configuration, re-configuration, re-re-configuration</a>:  <strong>Good</strong>. It's all Javascript.</p></li>
+  <li>
+  <p><a href="#download-dependencies">Download dependencies</a>: <strong>Good</strong>. NPM does a reasonable job.</p></li>
+</ol>
+<p>In general, Gulp does a much better job at managing dependencies between tasks than earlier build systems. At a macro-level it provides the same task definition as Make or Rake or Ant: a Task is a name + dependencies + command, but within a task it makes it easy to chain together multiple small steps. For example, the following task:</p>
+<pre><code class="js">gulp.task(&#39;script&#39;, function(){
+    return gulp.src(&#39;./js/src/*.js&#39;)
+               .pipe(cached())
+               .pipe(uglify())
+               .pipe(remember())
+               .pipe(concat(&#39;app.js&#39;))
+               .pipe(gulp.dest(&#39;./js/&#39;));
+});
+</code></pre>
+<p>Takes the <code>.js</code> code in a <code>js/src</code> folder and passes it through multiple phases: caching (via <code>cached</code> and <code>remember</code>), minification (via uglify), concatenation into a single file, and copying into a destination folder. You do not need to define files to store these intermediate results in and make sure they stay in sync (and don't collide with each other!): you just pipe the stages together and Gulp figures out the rest.</p><h3 id="sbt">SBT</h3>
+<pre><code class="scala">// Set the project name to the string &quot;my-project&quot; and the version to 1.0.0.
+name := &quot;my-project&quot;
+
+version := &quot;1.0.0&quot;
+
+// Add a single dependency, for tests.
+libraryDependencies += &quot;junit&quot; % &quot;junit&quot; % &quot;4.8&quot; % &quot;test&quot;
+
+// Add multiple dependencies.
+libraryDependencies ++= Seq(
+  &quot;net.databinder&quot; %% &quot;dispatch-google&quot; % &quot;0.7.8&quot;,
+  &quot;net.databinder&quot; %% &quot;dispatch-meetup&quot; % &quot;0.7.8&quot;	
+)
+
+// Use the project version to determine the repository to publish to.
+publishTo := Some(
+  if (version.value endsWith &quot;-SNAPSHOT&quot;) &quot;http://example.com/maven/snapshots&quot; 
+  else &quot;http://example.com/maven/releases&quot;
+)
+
+// Apart from the &quot;root&quot; project, a SBT build can have sub-projects with their
+// own configuration, or their own custom tasks associated.
+
+val sampleStringTask = taskKey[String](&quot;A sample string task.&quot;)
+val sampleIntTask = taskKey[Int](&quot;A sample int task.&quot;)
+
+lazy val commonSettings = Seq(
+  organization := &quot;com.example&quot;,
+  version := &quot;0.1.0-SNAPSHOT&quot;
+)
+
+lazy val library = (project in file(&quot;library&quot;)).
+  settings(commonSettings: _*).
+  settings(
+    sampleStringTask := System.getProperty(&quot;user.home&quot;),
+    sampleIntTask := {
+      val sum = 1 + 2
+      println(&quot;sum: &quot; + sum)
+      sum
+    }
+  )
+</code></pre>
+<p><a href="http://www.scala-sbt.org/">SBT</a> used to be called the "Simple Build Tool", but on account of its reputation of complexity and non-simple-ness the name has been since ret-conned to mean "Scala Build Tool". It is the primary build tool used by the Scala community, although some use Maven or Ant and Gradle, and SBT itself supports other JVM languages (e.g. Java) as well.</p>
+<p>SBT is comparatively different from any build tool we've seen so far, and shares ideas with many of them:</p>
+<ul>
+  <li>
+  <p>While earlier tools could be classified roughly into "task oriented" tools  like Make/Rake/Ant/Gulp and "configuration oriented" tools like Maven/Gradle,  SBT fuses both ideas: you have a global configuration you can override and  work with, but configuration values are Tasks rather than simple values.</p></li>
+  <li>
+  <p>Thus "tasks" like "compile code" live in the same configuration as tasks like  "current version", and you can override both the "compile code" task and the  "current version" task the same way, and the "current version" can depend on  other tasks the same way that the "compile code" task can.</p></li>
+  <li>
+  <p>The "configuration" for a SBT project follows a similar pattern to a Grunt  build: you execute a bunch of code (JS for Grunt, Scala for SBT) to generate  your "configuration" (a JSON object for Grunt, a list of task <code>:=</code>  assignments for SBT) which is then passed to the engine to evaluate and  decide what to do. Like how Grunt config values can depend on others via  <code>&lt;%= %&gt;</code> syntax, SBT config values can depend on others via <code>.value</code> syntax.</p></li>
+  <li>
+  <p>Like Rake, the body of each SBT task is arbitrary code (though Scala instead  of Ruby).</p></li>
+  <li>
+  <p>SBT supports watching for file changes and running arbitrary tasks by  default.</p></li>
+</ul>
+<p>SBT also has some novel ideas that haven't really been seen in earlier tools discussed in this post.</p>
+<ul>
+  <li>
+  <p>SBT includes "multi-module" builds by default, and you can trivially set it  up to support the same operations (e.g. <code>test</code>, <code>compile</code>, <code>publishSigned</code>,  whatever) on different modules in a project with only minor differences (e.g.  different root folders).</p></li>
+  <li>
+  <p>The code for the SBT build file is itself built using SBT; that means build  "plugins" are just "normal" dependencies of the SBT build-project, and are  just configured using the build-project's own build (in <code>project/build.sbt</code>  instead of just <code>build.sbt</code>)</p></li>
+  <li>
+  <p>SBT tasks return values! And these values are actually used: the primary  way of depending on another task is to use its <code>.value</code>, which both provides  the value of that task as well as creates the dependency between them. Thus  there's much less "write something to disk, hope the next task picks it up  from the right spot": the result of a task is directly handed to the tasks  that depend on it.</p></li>
+  <li>
+  <p>Partly as a consequence of the above, <em>everything</em> is a task! From  heavyweight processes like compiling and packaging your code, to trivial  properties like project version, all these are configured, overriden, or  depended or or made to depend on other tasks in the same way!</p></li>
+  <li>
+  <p>SBT has a more complex execution model than any tool we've seen so far.  Shell Scripts, Ant or Maven work by "directly" executing things, and other  tools first execute code to generate a build definition which is then  executed, SBT adds an additional stage that the Scala code executes to  generate a <em>Settings list</em>, and this Settings list is then executed to  generate the value for each task, and only then are the tasks executed  to perform your work.</p></li>
+</ul>
+<p>So how does that stack up against the requirements I described above?</p>
+<ol>
+  <li>
+  <p><a href="#running-ad-hoc-commands">Running ad-hoc commands</a>: <strong>Okay</strong>. You can run arbitrary code, but you  need to define a <code>taskKey[T]</code> and some other boilerplate. It's not terrible,  but it's slightly inconvenient.</p></li>
+  <li>
+  <p><a href="#knowing-how-to-order-the-execution-of-commands-based-on-dependencies">Knowing how to order the execution of commands based on dependencies</a>:  <strong>Good</strong>. SBT executes things based on the dependency graph between tasks,  which is known before-hand before any of the tasks run.</p></li>
+  <li>
+  <p><a href="#caching-command-output-if-its-inputs-dont-change">Caching command output if its inputs don't change</a>: <strong>Okay</strong>. The built  in Scala compilation caches and re-uses parts of the compiled code, and  there is the built-in <a href="http://www.scala-sbt.org/0.13.0/api/index.html#sbt.FileFunction$">FileFunction.cached</a> helper, but it's awkward to use.</p></li>
+  <li>
+  <p><a href="#parallelize-different-commands">Parallelize different commands</a>: <strong>Good</strong>: SBT runs unrelated tasks in  parallel based on the dependency graph.</p></li>
+  <li>
+  <p><a href="#watch-for-file-changes-and-running-commands-based-on-them">Watch for file-changes and running commands based on them</a>: <strong>Good</strong>.  SBT does this by default. It's a bit finnicky sometimes, e.g. you can't  easily watch different sets of files and run different commands based on  which files change, but it does an acceptable job.</p></li>
+  <li>
+  <p><a href="#using-external-processes-including-compilers">Using external processes, including compilers</a>: <strong>Okay</strong>. Shelling out  from SBT isn't as convenient as Rake, but it's not bad</p></li>
+  <li>
+  <p><a href="#being-used-by-external-processes">Being used by external processes</a>: <strong>Poor</strong>. SBT boots up terribly  slowly, on the order of 5-10 seconds. This is fine when being used  interactively, but if some other script wants to run <code>sbt compile</code> it will  be paying this heavy startup each time. e.g. IDEs like IntelliJ take forever  to extract a sensible project model from SBT due to its slow bootup. This is  totally independent of the cost of Scala compiler warm up, and its own  issue.</p></li>
+  <li>
+  <p><a href="#allowing-configuration-re-configuration-re-re-configuration">Allowing configuration, re-configuration, re-re-configuration</a>:  <strong>Good</strong>. SBT is probably one of the most re-configurable build tools out  there. Every setting can be over-ridden, such that even baked-in defaults  like "where to put your files" can be re-configured. You can even e.g.  re-configure your dependencies to depend on your <code>scalaVersion</code> if you so  wished, since they're all tasks. You can easily take a large blob of  configuration and re-use it in a another sub-project with miner tweaks,  letting you maintain consistency across lots of different sub-modules while  avoiding copying &amp; pasting code.</p></li>
+  <li>
+  <p><a href="#download-dependencies">Download dependencies</a>: <strong>Good</strong>. SBT by default uses Ivy which deals  with Java and Scala dependencies just fine. It could be faster, but it's  acceptable</p></li>
+</ol>
+<p>In general, SBT takes a lot of steps forward from previous build tools analyzed here. While Gulp allows finer-grained ad-hoc dependency graphs to be build up using <code>.pipe</code>, SBT does it to an even greater degree, such that every constant or string in your build configuration: <code>version</code>, <code>scalaVersion</code>, <code>libraryDependencies</code>, <code>name</code>, all that participates in the dependency graph and can depend on things or be depended on. Furthermore, SBT's multi-module support is relatively unprecedented, letting you easily maintain consistency across a lot of different sub-modules.</p>
+<p>SBT has its problems: apart from the boot-slowness mentioned above, there are also often complaints about the impenetrable build syntax, as well as impenetrable build semantics that makes everything trivial, but only if you know the magic incantation that is difficult to derive from first principles. Those complaints, while valid, largely fall outside of the feature-comparison of this post.</p><h2 id="round-up">Round Up</h2>
+<p>Here's the rough round-up of where the various tools fall in the various features that we decided were desirable. I left out <a href="#ant">Ant</a> and <a href="#rake">Rake</a>, since they follow the featureset of <a href="#make">Make</a> pretty closely albeit in new languages. </p><table class="table table-bordered">
+<thead>
+  <tr>
+    <th align="left"> </th>
+    <th align="left"><a href="#shell-scripts">Shell Scripts</a> </th>
+    <th align="left"><a href="#make">Make</a> </th>
+    <th align="left"><a href="#ant">Ant</a> </th>
+    <th align="left"><a href="#maven">Maven</a> </th>
+    <th align="left"><a href="#rake">Rake</a> </th>
+    <th align="left"><a href="#grunt">Grunt</a> </th>
+    <th align="left"><a href="#gulp">Gulp</a> </th>
+    <th align="left"><a href="#sbt">SBT</a> </th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td align="left"><a href="#running-ad-hoc-commands">Running ad-hoc commands</a> </td>
+    <td align="left">Good </td>
+    <td align="left">Good </td>
+    <td align="left"> </td>
+    <td align="left">Poor </td>
+    <td align="left"> </td>
+    <td align="left">Okay </td>
+    <td align="left">Okay </td>
+    <td align="left">Okay </td>
+  </tr>
+  <tr>
+    <td align="left"><a href="#knowing-how-to-order-the-execution-of-commands-based-on-dependencies">Dependency-based execution</a> </td>
+    <td align="left">Poor </td>
+    <td align="left">Okay </td>
+    <td align="left"> </td>
+    <td align="left">Good </td>
+    <td align="left"> </td>
+    <td align="left">Poor </td>
+    <td align="left">Good </td>
+    <td align="left">Good </td>
+  </tr>
+  <tr>
+    <td align="left"><a href="#caching-command-output-if-its-inputs-dont-change">Caching command output</a> </td>
+    <td align="left">Poor </td>
+    <td align="left">Good </td>
+    <td align="left"> </td>
+    <td align="left">Good </td>
+    <td align="left"> </td>
+    <td align="left">Poor </td>
+    <td align="left">Poor </td>
+    <td align="left">Okay </td>
+  </tr>
+  <tr>
+    <td align="left"><a href="#parallelize-different-commands">Parallelizing different commands</a> </td>
+    <td align="left">Okay </td>
+    <td align="left">Okay </td>
+    <td align="left"> </td>
+    <td align="left">Good </td>
+    <td align="left"> </td>
+    <td align="left">Poor </td>
+    <td align="left">Poor </td>
+    <td align="left">Good </td>
+  </tr>
+  <tr>
+    <td align="left"><a href="#watch-for-file-changes-and-running-commands-based-on-them">Running commands on file change</a> </td>
+    <td align="left">Poor </td>
+    <td align="left">Poor </td>
+    <td align="left"> </td>
+    <td align="left">Okay </td>
+    <td align="left"> </td>
+    <td align="left">Good </td>
+    <td align="left">Good </td>
+    <td align="left">Good </td>
+  </tr>
+  <tr>
+    <td align="left"><a href="#using-external-processes-including-compilers">Using external processes</a> </td>
+    <td align="left">Good </td>
+    <td align="left">Good </td>
+    <td align="left"> </td>
+    <td align="left">Okay </td>
+    <td align="left"> </td>
+    <td align="left">Poor </td>
+    <td align="left">Okay </td>
+    <td align="left">Okay </td>
+  </tr>
+  <tr>
+    <td align="left"><a href="#being-used-by-external-processes">Being used by external processes</a> </td>
+    <td align="left">Good </td>
+    <td align="left">Good </td>
+    <td align="left"> </td>
+    <td align="left">Good </td>
+    <td align="left"> </td>
+    <td align="left">Good </td>
+    <td align="left">Good </td>
+    <td align="left">Poor </td>
+  </tr>
+  <tr>
+    <td align="left"><a href="#allowing-configuration-re-configuration-re-re-configuration">Configuration &amp; re-configuration</a> </td>
+    <td align="left">Okay </td>
+    <td align="left">Okay </td>
+    <td align="left"> </td>
+    <td align="left">Good </td>
+    <td align="left"> </td>
+    <td align="left">Good </td>
+    <td align="left">Good </td>
+    <td align="left">Good </td>
+  </tr>
+  <tr>
+    <td align="left"><a href="#download-dependencies">Downloading dependencies</a> </td>
+    <td align="left">Poor </td>
+    <td align="left">Poor </td>
+    <td align="left"> </td>
+    <td align="left">Good </td>
+    <td align="left"> </td>
+    <td align="left">Good </td>
+    <td align="left">Good </td>
+    <td align="left">Good </td>
+  </tr>
+</tbody></table>
+<p>This is no where near a comprehensive guide to build tool functionality. Apart from being an arbitrary set of features, and an arbitrary set of judgements on each feature, it also leaves out other tools like Pants, Buck, Bazel, Salt or Puppet from the comparison. </p>
+<p>There are a lot of different ways a build tool can be designed: from command-based tools like Rake or Gulp, to configuration-based tools like Maven or Grunt, to hybrids like SBT. Different build tools have different conceptions of "dependencies": from shell scripts having none at all, to Maven with its single, linear lifecycle, to Make/Rake/Ant with its command-based dependencies and Gulp/SBT with their fine-grained dependencies.</p>
+<p>Hopefully this post gave a good walk through of the space of various build tools, and demonstrates the progression of the field over-time as features appear and evolve. Hopefully this gave some understanding in what a build tool is, a basis in which to compare them, and perhaps guidance if some day you decide existing tools are lacking and you want to build your own!</p><div id="disqus_thread"></div><script>
+      /**
+      * RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+      * LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+      */
+
+      var disqus_config = function () {
+      this.page.url = "http://www.lihaoyi.com/post/WhatsinaBuildTool.html"; // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "What's in a Build Tool?"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+      };
+
+      (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+
+      s.src = '//lihaoyi.disqus.com/embed.js';
+
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+      })();
+  </script></div><div class=" cache6e734f883e5a972fd8c15f0a7a2b05ec-WideStyles-footer cache6e734f883e5a972fd8c15f0a7a2b05ec-Styles-footer">Last published 2016-03-04</div></body></html>

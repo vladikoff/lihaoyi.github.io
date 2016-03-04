@@ -1,0 +1,744 @@
+<html><head><meta charset="utf-8" /><link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" type="text/css" /><link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" /><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.1.0/styles/github-gist.min.css" rel="stylesheet" type="text/css" /><title>Strategic Scala Style: Principle of Least Power</title><style>@media (min-width: 48em) {.cache6e734f883e5a972fd8c15f0a7a2b05ec-WideStyles-header{
+  bottom: 0px;
+  justify-content: center;
+  position: fixed;
+  top: 0px;
+  width: 25%;
+}
+
+.cache6e734f883e5a972fd8c15f0a7a2b05ec-WideStyles-headerContent{
+  text-align: center;
+}
+
+.cache6e734f883e5a972fd8c15f0a7a2b05ec-WideStyles-content{
+  box-sizing: border-box;
+  margin-left: 25%;
+  padding: 48px;
+}
+
+.cache6e734f883e5a972fd8c15f0a7a2b05ec-WideStyles-footer{
+  bottom: 0px;
+  height: 50px;
+  position: fixed;
+  width: 25%;
+}
+}</style><style>@media (max-width: 48em) {.cache6e734f883e5a972fd8c15f0a7a2b05ec-NarrowStyles-header{
+  margin-bottom: 10px;
+}
+
+.cache6e734f883e5a972fd8c15f0a7a2b05ec-NarrowStyles-content{
+  padding: 16px;
+}
+
+.cache6e734f883e5a972fd8c15f0a7a2b05ec-NarrowStyles-headerContent{
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+
+.cache6e734f883e5a972fd8c15f0a7a2b05ec-NarrowStyles-linkFlex{
+  align-self: flex-end;
+}
+
+.cache6e734f883e5a972fd8c15f0a7a2b05ec-NarrowStyles-flexFont{
+  font-size: 4vw;
+}
+}</style><style>.cache6e734f883e5a972fd8c15f0a7a2b05ec-Styles-header{
+  align-items: center;
+  background-color: rgb(61, 79, 93);
+  box-sizing: border-box;
+  display: flex;
+  padding: 20px;
+}
+
+.cache6e734f883e5a972fd8c15f0a7a2b05ec-Styles-headerLinkBox{
+  display: flex;
+  flex: 1;
+  flex-direction: row;
+  text-align: center;
+}
+
+.cache6e734f883e5a972fd8c15f0a7a2b05ec-Styles-headerLink{
+  align-items: center;
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  padding: 10px 10px;
+}
+
+.cache6e734f883e5a972fd8c15f0a7a2b05ec-Styles-footer{
+  color: rgb(158, 167, 174);
+  display: flex;
+  justify-content: center;
+}
+
+.cache6e734f883e5a972fd8c15f0a7a2b05ec-Styles-subtleLink{
+  text-decoration: none;
+}
+</style><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.1.0/highlight.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.1.0/languages/scala.min.js"></script><script>hljs.initHighlightingOnLoad();</script><meta name="viewport" content="initial-scale = 1.0,maximum-scale = 1.0" /><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-27464920-5', 'auto');
+ga('send', 'pageview');
+</script><script>if (window.location.protocol == "https:")
+    window.location.href = "http:" + window.location.href.substring(window.location.protocol.length);
+</script></head><body style="margin: 0px;"><div class=" cache6e734f883e5a972fd8c15f0a7a2b05ec-WideStyles-header cache6e734f883e5a972fd8c15f0a7a2b05ec-NarrowStyles-header cache6e734f883e5a972fd8c15f0a7a2b05ec-Styles-header"><div class=" cache6e734f883e5a972fd8c15f0a7a2b05ec-NarrowStyles-headerContent cache6e734f883e5a972fd8c15f0a7a2b05ec-WideStyles-headerContent"><h1 style="padding: 10px 10px;margin: 0px;"><a style="color: white;font-weight: bold;" href=".." class=" cache6e734f883e5a972fd8c15f0a7a2b05ec-Styles-subtleLink cache6e734f883e5a972fd8c15f0a7a2b05ec-NarrowStyles-flexFont"><i class="fa fa-cogs"></i> Haoyi's Programming Blog</a></h1><div class=" cache6e734f883e5a972fd8c15f0a7a2b05ec-Styles-headerLinkBox cache6e734f883e5a972fd8c15f0a7a2b05ec-NarrowStyles-linkFlex"><div class=" cache6e734f883e5a972fd8c15f0a7a2b05ec-Styles-headerLink"><a href="../post/HelloWorldBlog.html" class=" cache6e734f883e5a972fd8c15f0a7a2b05ec-Styles-subtleLink" style="color: white;"><div><div><i class="fa fa-question-circle"></i></div> About</div></a></div><div class=" cache6e734f883e5a972fd8c15f0a7a2b05ec-Styles-headerLink"><a href="https://lihaoyi.github.io/Resume/" class=" cache6e734f883e5a972fd8c15f0a7a2b05ec-Styles-subtleLink" style="color: white;"><div><div><i class="fa fa-file-text-o"></i></div> Resume</div></a></div><div class=" cache6e734f883e5a972fd8c15f0a7a2b05ec-Styles-headerLink"><a href="https://github.com/lihaoyi" class=" cache6e734f883e5a972fd8c15f0a7a2b05ec-Styles-subtleLink" style="color: white;"><div><div><i class="fa fa-github"></i></div> Github</div></a></div></div></div></div><div class=" cache6e734f883e5a972fd8c15f0a7a2b05ec-WideStyles-content cache6e734f883e5a972fd8c15f0a7a2b05ec-NarrowStyles-content" style="max-width: 900px;"><h1>Strategic Scala Style: Principle of Least Power</h1><div style="color: #999;margin-bottom: 20px;">Posted <a href="https://github.com/lihaoyi/blog/commit/00f45a23193e4545471a1ce4d3737ee67f657e79">2016-02-14</a></div><p>The Scala language is large and complex, and it provides a variety of tools that a developer can use to do the same thing in a variety of ways. Given the range of possible solutions to every problem, how can a developer choose which one should be used? This is the first in a series of blog posts aiming to provide style guidelines at a "strategic" level. Above the level of "how much whitespace should I use" or camelCase vs PascalCase, it should help a developer working with the Scala language choose from the buffet of possible solutions.</p>
+<hr/><h2 id="about-strategic-scala-style">About Strategic Scala Style</h2>
+<p>These guidelines are based on my own experience working on open- and closed-source projects in Scala. Despite that, they all follow from a coherent set of fundamental principles, which hopefully will provide justification and beyond the normal "I prefer you prefer" nature of these discussions.</p>
+<p>These guidelines will all assume that you already know most of Scala's language features and what can be done with them, and will focus purely on how to choose between them when picking your solution. It sticks purely to "Vanilla Scala" and its standard library features/APIs: you will not find anything regarding e.g. Akka or Scalaz in here.</p>
+<p>No doubt people coming from "Monadic" or "Reactive" or "Type-level" or "Scala.js" camps (i.e. basically everyone) would disagree with some guidelines. Nevertheless, hopefully the over-all document is still broadly applicable enough that disagreements become</p>
+<blockquote>
+  <p>"I think these points should be re-ordered"</p>
+</blockquote>
+<p>or</p>
+<blockquote>
+  <p>"Here's another technique that could be slotted in here"</p>
+</blockquote>
+<p>Rather than</p>
+<blockquote>
+  <p>"Everything is wrong and this is terrible"</p>
+</blockquote>
+<p>You may agree or disagree with any of these; let me know in the comments below!</p><h2 id="quick-reference-principle-of-least-power">Quick Reference: Principle of Least Power</h2>
+<p>Here are the principles behind this set of guidelines:</p>
+<ul>
+  <li><strong><a href="#philosophy-principle-of-least-power">Philosophy: Principle of Least Power</a></strong>
+    <ol>
+      <li><em><a href="#complexity-is-your-enemy">Complexity is your Enemy</a></em></li>
+      <li><em><a href="#dont-fear-refactoring">Don't Fear Refactoring</a></em></li>
+      <li><em><a href="#dont-over-engineer">Don't Over Engineer</a></em></li>
+    </ol>
+  </li>
+</ul>
+<p>Here is a listing of all the guidelines at a glance</p>
+<ul>
+  <li><strong><a href="#immutability--mutability">Immutability &amp; Mutability</a></strong>
+    <ol>
+      <li><em><a href="#immutability-by-default">Use immutability as far as possible</a></em></li>
+      <li><em><a href="#mutability-for-mutable-things">Unless you are actually modeling mutable things</a></em></li>
+      <li><em><a href="#mutability-for-perf">Or for performance</a></em></li>
+      <li><em><a href="#limit-the-scope-of-mutability">Even then, scope it as tightly as possible</a></em></li>
+      <li><em><a href="#no-double-mutability">Don't use double-mutability, you probably don't need it</a></em></li>
+      <li><em><a href="#event-sourcingcqrs">Don't use Event-Sourcing/CQRS unless you know what you're doing</a></em></li>
+    </ol>
+  </li>
+  <li><strong><a href="#published-interfaces">Published Interfaces</a></strong>
+    <ol>
+      <li><em><a href="#static-methods-only">The simplest interface to a package is static method with standard types</a></em></li>
+      <li><em><a href="#static-methods-only">Next, static methods that take/return custom types, presumably with methods</a></em></li>
+      <li><em><a href="#instantiating-custom-types">Next, is needing the user to instantiate some classes</a></em></li>
+      <li><em><a href="#inheriting-from-classes">Lastly, is needing the user to inherit from some classes</a></em></li>
+    </ol>
+  </li>
+  <li><strong><a href="#data-types">Data Types</a></strong>
+    <ol>
+      <li><em><a href="#built-ins">Use built-in primitives, collection &amp; combinations of them when possible</a></em></li>
+      <li><em><a href="#Functions">Use opaque functions when you just need a single callback or factory</a></em></li>
+      <li><em><a href="#simple-case-classes">Use a simple <code>case class</code> if you want to bundle multiple things together</a></em></li>
+      <li><em><a href="#sealed-traits">Use a <code>sealed trait</code> if you want to pass multiple different things</a></em></li>
+      <li><em><a href="#ad-hoc-classes">Use an opaque <code>class</code> or <code>trait</code> as a last resort</a></em></li>
+    </ol>
+  </li>
+  <li><strong><a href="#error-handling">Error Handling</a></strong>
+    <ol>
+      <li><em><a href="#Option">If you know there is only one thing that can go wrong, use an Option</a></em></li>
+      <li><em><a href="#simple-sealed-trait">If you know there is multiple things that can go wrong, use a Simple Sealed Trait</a></em></li>
+      <li><em><a href="#Exceptions">If you don't know what can go wrong, use exceptions</a></em></li>
+      <li><em><a href="#error-flags">(Almost) Never set error flags</a></em></li>
+    </ol>
+  </li>
+  <li><strong><a href="#asynchronous-return-types">Asynchronous Return Types</a></strong>
+    <ol>
+      <li><em><a href="#return-t">The simplest case, return <code>T</code></a></em></li>
+      <li><em><a href="#return-future">For asynchronous results, return <code>Future[T]</code></a></em></li>
+      <li><em><a href="#take-a-callback-t--unit">Only pass in callbacks e.g. <code>onSuccess: T =&gt; Unit</code> as a last resort</a></em></li>
+    </ol>
+  </li>
+  <li><strong><a href="#dependency-injection">Dependency Injection</a></strong>
+    <ol>
+      <li><em><a href="#hardcode-it">First, hard-code the dependency</a></em></li>
+      <li><em><a href="#method-parameter">Second, pass it as a parameter to the method which needs it</a></em></li>
+      <li><em><a href="#constructor-injection">Third, inject it into multiple methods by passing it into a containing class</a></em></li>
+      <li><em><a href="#abstract-members">Fourth, if your containing class is split into traits in multiple files, use abstract members</a></em></li>
+      <li><em><a href="#implicit-method-parameter">Fifth, make the method parameter implicit</a></em></li>
+      <li><em><a href="#dynamic-variables-aka-global-mutable-state">If all else fails, use "Dynamic Variables" aka global-mutable-state</a></em></li>
+      <li><em><a href="#setter-injection">Don't use setter injection</a></em></li>
+    </ol>
+  </li>
+</ul><h2 id="philosophy-principle-of-least-power">Philosophy: Principle of Least Power</h2>
+<p>In this context, this principle can be applied as follows:</p>
+<blockquote>
+  <p>Given a choice of solutions, pick the least powerful solution capable of solving your problem</p>
+</blockquote>
+<p>This is not immediately obvious. Developers put effort into trying to create powerful, flexible solutions. However, a powerful, flexible solution that can do anything is the most difficult to analyze, while a restricted solution that does a few things, and in fact <em>can only do a few things</em>, is straightforward for someone to inspect, analyze and manipulate later.</p>
+<p>The origin of the rule is with regard to programming languages, i.e.</p>
+<blockquote>
+  <p>Given a choice of languages, choose the least powerful language capable of solving your problem</p>
+</blockquote>
+<p>And is justified by much the same reasoning I provided above.</p>
+<p>Why is this principle applicable to programming in the Scala language? You could easily imagine the opposite principle applying:</p>
+<blockquote>
+  <p>Given the choice of solutions, pick the most powerful solution capable of solving your problem</p>
+</blockquote>
+<p>This would mean, for example, that solutions like meta-programming would be preferred over other more "basic" solutions. Not because meta-programming is advanced, but because it often allows tremendous flexibility to achieve absolutely anything in a very small amount of code. Why is that a bad thing?</p>
+<p>Arguably, this is bad for a few reasons:</p>
+<ol>
+  <li>When programming in Scala, Complexity is your Enemy</li>
+  <li>Scala is statically typed, so you don't need to fear refactoring</li>
+  <li>Thus you don't need to over-engineer in anticipation of future work; just  refactor when necessary</li>
+</ol><h3 id="complexity-is-your-enemy">Complexity is your Enemy</h3>
+<p>The most common complaints from developers using Scala is that code is confusing and "hard to read" and "complicated", and that the compiler is slow. I'm not going to talk about compilation speed because it's often outside your control, but given the other complaint, making code "easier to read" and "less complicated" should be a priority to a developer working in the language.</p>
+<p>This is not the case in every language! In Python or Ruby for example, people often call it "easy to read" or "executable pseudocode" referring to how the code looks exactly like you would imagine from sketchy it out on the whiteboard. The chief complaints center around and refactorability/maintainability and runtime performance. When programming in Python or Ruby an experienced programmer works to improve the refactorability of the code, e.g writing loads of unit tests to catch type errors, far more than you would in a statically-typed language like Java or Scala. That's not "better" or "worse" than writing fewer unit tests in Java or Scala, just "different" in order to accommodate the different constraints and problems the language presents you with.</p>
+<p>Coming back to Scala, a developer should put in extra effort be making your code "easier to read" and "less complicated". That isn't the case in every language, but it is what you should do to in order to mitigate this weakness of the Scala programming language. Luckily, Scala provides other tools that help.</p><h3 id="dont-fear-refactoring">Don't Fear Refactoring</h3>
+<p>In dynamically-typed languages like Python and Ruby, and even other slightly-weaker-statically-typed languages like Java or C, trivial refactorings are often pretty difficult or scary. For example, renaming a field or method in a large Python codebase is difficult as you have no way to assure yourself you properly updated all callsites. Even in Java, widespread use of casting and reflection means you could easily add/remove/modify a class, compile everything successfully, and still have a <code>ClassCastException</code> or <code>InvocationTargetException</code> pop up at runtime. To combat this, you often program slightly pre-emptively: even in a small codebase, you will often pass arguments into a function you're not yet using, or pass in "more than you need", e.g. passing in the a whole object rather than just the single method/callback necessary. This is often subtle and subconscious, but the goal is usually to try and avoid the need for refactoring later: if you need to do more things, you can do so with minimal changes to the existing code.</p>
+<p>In the Scala programming language, you should not fear refactoring. You have the compiler to guide you, from trivial changes like plumbing extra arguments into a function, to more involved restructurings of your codebase. There are still points of danger around things like <code>.toString</code> or <code>==</code>, but they're few enough that they become a "slightly annoying nuisances" rather than the "show-stopping hurdle" they present to many refactorings in dynamic languages.</p><h3 id="dont-over-engineer">Don't Over-Engineer</h3>
+<p>Thus, in Scala, you should avoid over-engineering things in anticipation of future need.</p>
+<ul>
+  <li>
+  <p>If your function only needs a single method from an object, and aren't  sure if it will need other things later, pass in that method rather than  the whole object so you <em>can't</em> use other things.</p></li>
+  <li>
+  <p>If you're not sure whether a one-use-helper method will need to be  re-used in future, nest it inside the  method that uses it so it <em>can't</em> be immediately re-used.</p></li>
+</ul>
+<p>This may seem counter-intuitive, but it serves a purpose: by enforcing that all these currently-un-needed things <em>can't</em> take place, you are limiting the set of things that <em>can</em> be done with your code. By doing this we forcefully narrow the interface between different parts of your codebase as much as possible. This provides benefits:</p>
+<ul>
+  <li>
+  <p>You get more freedom on both sides of the interface to evolve independently!  If you pass a single method into a function, instead of the entire complex  object, it becomes trivial to swap out the function later.</p></li>
+  <li>
+  <p>You can better reason about what bits of your code are interacting with what  other bits: if you pass a single method into a function rather than the whole  object, you now can see <em>immediately</em> that that function only uses that one  call, whereas previously you would need to dig through the sources to see  where it was used.</p></li>
+</ul>
+<p>In effect, by not pre-emptively over-engineering, we are trading off <em>ease-of-making-edits</em> to <em>ease-of-reading-and-understanding</em>. However, if we believe the earlier points that Scala's weakness is the difficulty in understanding complex code, and that it's strength is the ease of doing refactorings, this is a reasonable trade-of: we mitigate the problem that Scala is bad (complexity) at by leaning on what it's good at (refactoring). That is the principle under which the following guidelines arise.</p><h2 id="immutability--mutability">Immutability &amp; Mutability</h2>
+<p>When deciding between immutability and mutability...</p>
+<ol>
+  <li><em><a href="#immutability-by-default">Use immutability as far as possible</a></em></li>
+  <li><em><a href="#mutability-for-mutable-things">Unless you are actually modeling mutable things</a></em></li>
+  <li><em><a href="#mutability-for-perf">Or for performance</a></em></li>
+  <li><em><a href="#limit-the-scope-of-mutability">Even then, scope it as tightly as possible</a></em></li>
+  <li><em><a href="#no-double-mutability">Don't use double-mutability, you probably don't need it</a></em></li>
+  <li><em><a href="#event-sourcingcqrs">Don't use Event-Sourcing/CQRS unless you know what you're doing</a></em></li>
+</ol>
+<p>Immutable things don't change, and things changing when they shouldn't is a common source of bugs. If you're not sure whether something will need to change later, leave it immutable as a <code>val</code> or <code>collection.Seq</code> and make the jump to <code>var</code> or <code>mutable.Buffer</code> later when necessary.</p><h3 id="immutability-by-default">Immutability By Default</h3>
+<p>This is OK</p>
+<pre><code class="scala">val x = if(myBoolean) expr1 else expr
+</code></pre>
+<p>This is not OK:</p>
+<pre><code class="scala">var x: ExprType = null
+if(myBoolean) x = expr1 else x = expr
+</code></pre>
+<p>If something can be straightforwardly expressed in an immutable style, do it.</p><h3 id="mutability-for-mutable-things">Mutability For Mutable Things</h3>
+<p>In general, if you are actually modeling something which changes over time, using mutable <code>var</code>s or collections like <code>mutable.Buffer</code>s is fine. e.g. in a video game, you may have:</p>
+<pre><code class="scala">class Item{ ... }
+
+class Player(var health: Int = 100, val items: mutable.Buffer[Item] = mutable.Buffer.empty)
+
+val player = new Player()
+</code></pre>
+<p>Where we are actually modeling something whose <code>health</code> and <code>items</code> can change over time. This is fine. In theory, you could use fancy techniques like Event-Sourcing or CQRS to model this "immutably". In practice, modeling mutable things with mutable state is fine.</p>
+<p>In contrast, this is not ok:</p>
+<pre><code class="scala">class Item{ ... }
+
+class Player(var health: Int = 100, var items: mutable.Buffer[Item] = null)
+
+val player = new Player()
+
+player.items = mutable.Buffer.empty[Items]
+</code></pre>
+<p>Here, we are initializing the <code>items</code> variable to <code>null</code> and then initializing it again "properly" with an empty list sometime later. This is a very common pattern in Java and other languages, and is not ok: if you forget to mutate <code>player.items</code> before using it, or more-likely forget that some method you are using is using <code>player.items</code> before it gets set, it will blow up now or (worse) much later with a <code>NullPointerException</code>.</p>
+<p>Here is a real example, taken from the <a href="http://docs.scala-lang.org/overviews/parallel-collections/configuration.html#task-support">Scala Parallel Collections library</a>, which violates this principle:</p>
+<pre><code class="scala">scala&gt; import scala.collection.parallel._
+import scala.collection.parallel._
+
+scala&gt; val pc = mutable.ParArray(1, 2, 3)
+pc: scala.collection.parallel.mutable.ParArray[Int] = ParArray(1, 2, 3)
+
+scala&gt; pc.tasksupport = new ForkJoinTaskSupport(new scala.concurrent.forkjoin.ForkJoinPool(2))
+
+scala&gt; pc map { _ + 1 }
+res0: scala.collection.parallel.mutable.ParArray[Int] = ParArray(2, 3, 4)
+</code></pre>
+<p>As you can see, it uses the mutable <code>.tasksupport</code> attribute to configure how the parallel <code>map</code> operation is run. This is bad: it could easily have been passed in as a parameter to <code>map</code>, whether explicitly or as an implicit. As <code>tasksupport</code> does not model any actually-mutable value, using a mutable <code>var</code> just to initialize it is definitely bad style and who-ever wrote it should feel bad.</p>
+<p>In general, if the thing you are modeling changes over time, it is ok to use mutability. If the thing you are modeling does not, and you are just using mutability as part of some initialization process, you should reconsider.</p><h3 id="mutability-for-perf">Mutability For Perf</h3>
+<p>This is Ok</p>
+<pre><code class="scala">val fibs = mutable.Buffer(1, 1)
+while(fibs.length &lt; 100){
+  fibs.append(fibs(fibs.length-1) + fibs(fibs.length-2))
+}
+</code></pre>
+<p>Very often, mutable code ends up being an order-of-magnitude faster than the immutable version. This is even more pronounced when implementing Algorithms, as the most common, fast algorithms in books like CLRS are done in a mutable fashion. If having a small amount of mutability can increase your performance ten- or hundred-fold, that can let you simplify the <em>rest</em> of your code by doing away with parallelism, caching, batching, and all sorts of knotty things. Don't be afraid to make that tradeoff.</p><h3 id="limit-the-scope-of-mutability">Limit the Scope of Mutability</h3>
+<p>This:</p>
+<pre><code class="scala">def getFibs(n: Int): Seq[Int] = {
+  val fibs = mutable.Buffer(1, 1)
+  while(fibs.length &lt; n){
+    fibs.append(fibs(fibs.length-1) + fibs(fibs.length-2))
+  }
+  fibs
+}
+</code></pre>
+<p>is better than</p>
+<pre><code class="scala"><br/>def getFibs(n: Int, fibs: mutable.Buffer[Int]): Unit = {
+  fibs.clear()
+  fibs.append(1)
+  fibs.append(1)
+  while(fibs.length &lt; n){
+    fibs.append(fibs(fibs.length-1) + fibs(fibs.length-2))
+  }
+}
+</code></pre>
+<p>Even if you've decided that you're going to introduce mutability in some part of your code, don't let it leak everywhere unnecessarily! Ideally it's all encapsulated within a single function, in which case to the outside world it looks identical to the same function implemented with immutable internals.</p>
+<p>Note that sometimes you <em>do</em> need mutability to leak across function, class or module boundaries. For example, if you need performance, the second example above <em>is</em> faster than the first, and reduces allocations and thus garbage-collection pressure. However, default to the first example above unless you are 100% sure you need the perf.</p><h3 id="no-double-mutability">No Double-Mutability</h3>
+<p>In Java, this is bad, but very common</p>
+<pre><code class="java">ArrayList&lt;Int&gt; myList = new java.util.ArrayList&lt;Int&gt;()
+</code></pre>
+<p>In Scala, the equivalent bad code is</p>
+<pre><code class="scala">var myList = mutable.Buffer[Int]
+</code></pre>
+<p>However, you <em>almost never</em> need both the container to be mutable, as well as the variable holding the container to be mutable! The better Java code is</p>
+<pre><code class="java">final ArrayList&lt;Int&gt; myList = new java.util.ArrayList&lt;Int&gt;()
+</code></pre>
+<p>In Scala:</p>
+<pre><code class="scala">val myList = mutable.Buffer[Int]
+</code></pre>
+<p>Or</p>
+<pre><code class="scala">var myList = Vector[Int]
+</code></pre>
+<p>Whether you want it to be a mutable <code>var</code> holding an immutable collection or a immutable <code>val</code> holding a mutable collection is debatable, but you basically never want it to be doubly-mutable</p><h3 id="event-sourcingcqrs">Event-Sourcing/CQRS</h3>
+<p>Often, you'll hear people talking about techniques that make mutable state-changing code "pure" or "immutable", by instead storing a mostly-immutable, append-only log of events. This has many of the benefits of immutability in that even as new events change things, the old events are still there, and you can query the "state" of the system in any point in time by re-playing the events up to that point. This is something you cannot do when using mutable <code>var</code>s or collections like <code>mutable.Buffer</code>, and the technique is used to great effect in many places e.g.</p>
+<ul>
+  <li>
+  <p>Database, where the transaction logs allow "streaming" replication, and  isolation between transactions.</p></li>
+  <li>
+  <p>Video-games, where storing the input-log allows you to re-play everything  that happened during a session e.g. for future viewing</p></li>
+</ul>
+<p>These techniques can both be used in-memory, or with persisted to disk, or even with a full database/datastore holding the append-only log. A full explanation on how these techniques work is beyond the scope of this document.</p>
+<p>In general, if you want the benefits that these techniques bring: re-playability, isolation, streaming replication, then by all means use these techniques. In general, though, it is probably an over-kill for most use cases and should not be used by default unless you know you want those benefits.</p><h2 id="published-interfaces">Published Interfaces</h2>
+<p>When defining an interface to a package someone else will use...</p>
+<ol>
+  <li><em><a href="#static-methods-only">The simplest interface to a package is static method with standard types</a></em></li>
+  <li><em><a href="#static-methods-only">Next, static methods that take/return custom types, presumably with methods</a></em></li>
+  <li><em><a href="#instantiating-custom-types">Next, is needing the user to instantiate some classes</a></em></li>
+  <li><em><a href="#inheriting-from-classes">Lastly, is needing the user to inherit from some classes</a></em></li>
+</ol>
+<p>I use the term "Published Interfaces" as distinct from a "normal" Java <code>interface</code> or Scala <code>trait</code>. A published interface is a larger-scale interface between moderately large sections of a program, comprising of multiple <code>class</code>es, <code>object</code>s: the interface presented to a developer by an entire <code>package</code> or <code>.jar</code>.</p><h3 id="static-methods-only">Static Methods Only</h3>
+<p>Below is the best kind of published interface you can ask for</p>
+<pre><code class="scala">object TheirCode{
+  /**
+   * Takes a set of `T`s and a function which defines what other `T`s`
+   * can be reached from the outgoing edges from each `T``
+   *
+   * Returns the set of strongly connected components (each component
+   * being a Set[T])
+   *
+   * O(N + E) in the number of nodes N and total number of edges E
+   */
+  def stronglyConnectedComponents[T](nodes: Set[T],
+                                     edges: T =&gt; Set[T]): Set[Set[T]] = {
+    ... 500 lines of crazy code ...
+  }
+}
+
+object MyCode{
+  import TheirCode._
+  stronglyConnectedComponents(..., ...)
+}
+</code></pre>
+<p>It encapsulates a non-trivial algorithm, that uses tons of mutable state internally, and you probably would not be able to come up with yourself.</p>
+<p>Maybe it's using Tarjan's algorithm? Maybe it's using the Double-Stack algorithm? To the consumer of this interface, you don't care: you know you can feed in a <code>Set[T]</code> and a <code>T =&gt; Set[T]</code> of outgoing edges, and it will spit out the <code>Set[Set[T]]</code> of all the strongly connected components. You see it has 500 lines of crazy algorithmic code, but you don't need to care about any of that. The 2-line signature, and 5-line doc-comment, are all you need to know as far as using this in your own code is concerned.</p>
+<p>Of course, you can't <em>always</em> present a super-simple single-static-function only-dealing-with-known-types interface to your code: your code may simply be doing more than one-thing, and may need to be configured in more ways than can be stuffed into a single function's arguments. This sort of dead-simple "interface with only static-function dealing with known-types" is something to aspire to.</p><h3 id="instantiating-custom-types">Instantiating Custom Types</h3>
+<p>Below is a not-as-good interface</p>
+<pre><code class="scala">object TheirCode{
+  trait Frag{
+    def render: String
+  }
+  // HTML constructors
+  def div(children: Frag*): Frag
+  def p(children: Frag*): Frag
+  def h1(children: Frag*): Frag
+  ...
+  implicit def stringFrag(s: String): Frag
+}
+
+object MyCode{
+  import TheirCode._
+  val frag = div(
+    h1(&quot;Hello World&quot;),
+    p(&quot;I am a paragraph&quot;)
+  )
+  frag.render // &lt;div&gt;&lt;h1&gt;Hello World&lt;/h1&gt;&lt;p&gt;I am a paragraph&lt;/p&gt;&lt;/div&gt;
+}
+</code></pre>
+<p>Here, the interface of <code>TheirCode</code> starts making demands of the developer: you can't just call "one function" and get what you want, now you need to learn what a <code>Frag</code> is, which of the static methods <code>TheirCode</code> exposes returns <code>Frags</code>, and how to convert your own stuff into <code>Frag</code>s via the implicit conversion. Lastly, you also have to know what <em>you</em> can do with a <code>Frag</code>: in this case you can call <code>render</code> to turn it into a <code>String</code>. And <em>only then</em> can a developer do useful things with the library! After all, a developer trying to use your library isn't thinking</p>
+<blockquote>
+  <p>I want to learn how to construct <code>Frag</code>s and operate on them</p>
+</blockquote>
+<p>They're thinking</p>
+<blockquote>
+  <p>I want to generate HTML strings and put some of my strings in there.</p>
+</blockquote>
+<p>Of course, a developer will <em>have</em> to learn how to do all this <code>Frag</code> stuff before they can do what they want, but the less they need to learn the better.</p>
+<p>This example interface isn't terribly complex, but it is certainly more complex than the previous <code>stronglyConnectedComponents</code> example! This also isn't all-or-nothing: you can introduce more- or less- custom types and constructors for your users to learn, and it gets correspondingly harding for an outsider to figure out how to use your code.</p>
+<p>Again, it is not always possible to make your interface simpler than this, and I have published lots of code that uses this style of interface. Nevertheless, it is better than needing to inherit from classes to get the job done...</p><h3 id="inheriting-from-classes">Inheriting From Classes</h3>
+<p>Forcing users of your API to inherit from classes or traits should be the last resort. That's not to say that APIs designed around inheritence are un-usable: they've been used in the Java world for ages. Nevertheless, if you have a choice between exposing a few static functions, exposing some classes/types the developer will have to work with, and forcing the developer to inherit from your classes/traits, inheritence should be last on the list of options and only used as a last resort.</p><h2 id="data-types">Data Types</h2>
+<p>When picking what sort of type to use for some value...</p>
+<ol>
+  <li><em><a href="#built-ins">Use built-in primitives, collection &amp; combinations of them when possible</a></em></li>
+  <li><em><a href="#functions">Use opaque functions when you just need a single callback or factory</a></em></li>
+  <li><em><a href="#simple-case-classes">Use a simple <code>case class</code> if you want to bundle multiple things together</a></em></li>
+  <li><em><a href="#sealed-traits">Use a <code>sealed trait</code> if you want to pass multiple different things</a></em></li>
+  <li><em><a href="#ad-hoc-classes">Use an opaque <code>class</code> or <code>trait</code> as a last resort</a></em></li>
+</ol>
+<p>This applies whether that value is a method parameter, class parameter, field, or method return type. In general, using the "simplest" thing for each use case means that whoever is looking at the code later can make stronger assumptions about how that value.</p>
+<p>If I see a primitive or built-in collection, I know exactly it contains. If I see an opaque function, I know the only thing that can be done is to call it. If I see a simple <code>case class</code>, I can be relatively confident it's a dumb struct. If it's a <code>sealed trait</code>, it could be one of multiple dumb-structs. If it's a custom hand-rolled <code>class</code> or <code>trait</code>, all bets are off: it could be anything!</p>
+<p>By starting from the simplest types and making your way down the list in increasing-power only when necessary, you are respecting the principle of least power and sending signals to an API user about how your value is going to be used.</p><h3 id="built-ins">Built-ins</h3>
+<p>Where possible, you should always use built-in primitives and collections. While they are all flawed in various ways, they are well known and "boring", and someone looking at how to use your interface knows they're just interacting through already-known data-types. Standard <code>Int</code>s, <code>String</code>s, <code>Seq</code>s and <code>Option</code>s and combinations should be used instead of your own custom versions of the same concepts.</p>
+<p>If you find yourself passing an object to a method that only accesses a single field on that object, consider just passing that field directly. e.g. this:</p>
+<pre><code class="scala">class Foo(val x: Int, val s: String, val d: Double){
+  ... more things ...
+}
+
+def handle(foo: Foo) = {
+  ... foo.x ... // Only one usage of foo
+}
+
+val foo = new Foo(123, &quot;hellol&quot;, 1.23)
+
+handle(foo)
+</code></pre>
+<p>May be better re-written as</p>
+<pre><code class="scala">class Foo(val x: Int, val s: String, val d: Double)
+
+def handle(x: Int) = {
+  ... x ... // Only one usage of x
+}
+
+val foo = new Foo(123, &quot;hellol&quot;, 1.23)
+
+handle(foo.x)
+</code></pre>
+<p>This makes it clear that the <code>handle</code> doesn't <em>actually</em> need the entirety of <code>Foo</code>, which contains both <code>x: Int</code> and <code>s: String</code> and possibly other things. It only needs the single integer <code>x</code>. Furthermore, if we want to re-use <code>handle</code> in other parts of our codebase or exercise it in our unit tests, we won't need to go through the trouble of instantiating an entire <code>Foo</code> just to pass in a single <code>Int</code> and throw the rest away.</p>
+<p>Similarly, if you are returning an object of whom only a single field is used, just return that field. If you need the rest of the object later, you can then refactor to make it available.</p><h3 id="functions">Functions</h3>
+<p>More complex than built-ins is the opaque function; whether it's <code>Function0[R]</code>/<code>() =&gt; R</code>, <code>Function1[T1, R]</code>/<code>T1 =&gt; R</code>, or one of the higher numbered <code>FunctionN</code>s. The only thing you can do with these types is call them with arguments to get their return value.</p>
+<p>Taking and returning functions can substitute for many cases where in Java-land you would be taking and returning single-abstract-method interfaces: e.g. <a href="https://docs.oracle.com/javase/7/docs/api/java/lang/Runnable.html">Runnable</a>, <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Comparator.html">Comparator[T]</a> can be substituted by a <code>() =&gt; Unit</code> and <code>(T, T) =&gt; Int</code> in Scala-land.</p>
+<p>In general, if you find yourself passing an object to a method that only calls a single method, consider making that method take a <code>FunctionN</code> and passing in a lambda. e.g. this</p>
+<pre><code class="scala">class Exponentiator(val x: Int){
+   ... some methods ...
+  def exponentiate(d: Double): Double = math.pow(d, x)
+   ... more methods ...
+}
+
+def handle(exp: Exponentiator) = {
+  val myDouble = ...
+  ... exp.exponentiate(myDouble) ... // Only one usage of foo
+}
+
+val myExp = new Exponentiator(2)
+
+handle(myExp)
+</code></pre>
+<p>May be better re-written as</p>
+<pre><code class="scala">class Exponentiator(val x: Int){
+   ... some methods ...
+  def exponentiate(d: Double): Double = math.pow(d, x)
+   ... more methods ...
+}
+
+def handle(op: Double =&gt; Double) = {
+  val myDouble = ...
+  ... op(myDouble) ... // Only one usage of foo
+}
+
+val exp = new Exponentiator(2)
+
+handle(exp.exponentiate)
+</code></pre>
+<p>Again, this transformation makes it more obvious which parts of <code>exp</code> the <code>handle</code> function is using, making it easier to use <code>handle</code> elsewhere, or stub out the logic in a unit test.</p><h3 id="simple-case-classes">Simple Case Classes</h3>
+<p>Also more complex than built-ins, but in a different way than Functions, is case classes. These let you bundle multiple things together ad-hoc and assign names to the individual components. The advantage of doing it in a "simple" <code>case class</code> rather than in your own ad-hoc class is that everyone who sees your <code>case class</code> knows immediately what to expect: constructor, accessors, pattern-matching, hashCode, toString, equality, all nice things to have when dealing with dumb-struct-style objects.</p>
+<p>As an example, if you find yourself writing code that looks like this</p>
+<pre><code class="">class Foo(_x: Int, _y: Int){
+  def x = _x
+  def y = _y
+  def hypotenus = math.sqrt(x * x + y * y)
+  override def hashCode = x + y // ad-hoc custom hash function
+  override def equals(other: Any) = other match{
+    case f: Foo =&gt; f.x == x &amp;&amp; f.y == y
+    case _ =&gt; false
+  }
+}
+</code></pre>
+<p>Consider instead writing</p>
+<pre><code class="">case class Foo(x: Int, y: Int){
+  def hypotenus = math.sqrt(x * x + y * y)
+}
+</code></pre>
+<p>This serves multiple purposes:</p>
+<ul>
+  <li>
+  <p>Saves on verbosity</p></li>
+  <li>
+  <p>Reduces the number of places we can go wrong  (e.g. in our custom ad-hoc hash function above)</p></li>
+  <li>
+  <p>Makes our dumb-struct behave like everyone else's dumb-structs</p></li>
+</ul>
+<p>In general, there is no bright line between dumb-struct classes and more involved, ad-hoc classes: dumb-structs can and often do contain small amounts of logic (e.g. the <code>hypotenus</code> method above), and ad-hoc classes can and do contain small amounts of "dumb" data. Nevertheless, if the main purpose of a class is as a "dumb" data-structure rather than a repository for code, consider making it a <code>case class</code>.</p><h3 id="sealed-traits">Sealed Traits</h3>
+<p>If you need to pass one of several things, and each of those things is a "dumb-struct", consider using a <code>sealed trait</code>. This tells the future maintainer that the set of things that can live in this type is finite and fixed: they never need to worry about "new" classes coming along and inheriting from that interface/trait and needing to be able to handle it.</p><h3 id="ad-hoc-classes">Ad-hoc Classes</h3>
+<p>These are the most powerful of all the types that can be ascribed to a value. When looking at built-ins, functions or <code>case classes</code>, a developer using your code knows at a glance roughly what to expect. When looking at an ad-hoc <code>class</code> or <code>trait</code>, they don't know anything at all about how the class will be used, and will have to actually read the documentation or dig through the source code.</p>
+<p>Furthermore, the fact that ad-hoc classes are so ad-hoc means you lose concrete features that simpler data-types provide. For example:</p>
+<ul>
+  <li>Built-ins and primitives are all trivially serializable, without reflection,  using implicits (e.g. using <a href="https://github.com/spray/spray-json">spray-json</a>)</li>
+  <li>Case classes and sealed-traits are all almost-trivially serializable, without  reflection, using a few macros (e.g. using  <a href="https://github.com/fommil/spray-json-shapeless">spray-json-shapeless</a> or  <a href="http://lihaoyi.github.io/upickle-pprint/upickle/">uPickle</a>)</li>
+  <li>Built-ins, primitives, and case-classes all provide automatic, structural  <code>==</code> equality, <code>.hashCode</code>, and a meaningful <code>.toString</code>.</li>
+  <li>Built-ins and case-classes all allow destructuring pattern matching, which  is often very convenient</li>
+</ul>
+<p>These are all things you lose when you start using ad-hoc classes. In exchange for the flexibility they offer, you lose a whole lot of features!</p>
+<p>This isn't to say ad-hoc classes or traits are <em>bad</em>; in fact, most Scala programs have tons of them, and Java programs are basically 100% ad-hoc classes! What this means is that, where possible, you should try to avoid using an ad-hoc class in favor of something simpler: a <a href="#simple-case-classes">Simple Case Class</a>, <a href="#sealed-traits">Sealed Traits</a>, <a href="#Functions">Functions</a> or <a href="#built-ins">Built-ins</a>. Again, this applies anywhere a type an be seen: as a method argument, as a return type, as the type of a variable or value, whether local-to-a-method or belonging to an object or class.</p><h2 id="error-handling">Error Handling</h2>
+<ol>
+  <li><em><a href="#Option">If you know there is only one thing that can go wrong, use an Option</a></em></li>
+  <li><em><a href="#simple-sealed-trait">If you know there is multiple things that can go wrong, use a Simple Sealed Trait</a></em></li>
+  <li><em><a href="#Exceptions">If you don't know what can go wrong, use exceptions</a></em></li>
+  <li><em><a href="#error-flags">(Almost) Never set error flags</a></em></li>
+</ol>
+<p>In general, <code>Option</code>s, simple sealed traits, and exceptions are the most common way of dealing with errors. It is likely that different APIs you end up using will be using a mish-mash of these techniques. In general, it makes sense to wrap these mixed errors as soon as possible to put them in some consistent format: e.g. if you decide to use a sealed trait, wrap all known exceptions in a <code>try</code>-<code>catch</code> and convert the <code>Some</code>/<code>None</code> of <code>Option</code> returning functions into the relevant subclasses of your sealed trait. If you decide to use exceptions, use <code>Option.getOrElse(throw new MyCustomException)</code> to convert any <code>Option</code>s into better-named exceptions.</p><h3 id="option">Option</h3>
+<p>This is the simplest possible mechanism for returning errors from a function: you either get a <code>Some</code> containing the result, or you get a <code>None</code> containing nothing.</p>
+<p>This works great in simple cases, for example <code>Map[K, V]#get(k: K)</code> returns <code>Option[T]</code> because there's really only one thing that could have gone wrong: the key doesn't exist. There's nothing to say about <em>why</em> the key doesn't exist, and there's no other thing that could have gone wrong. This is the ideal use case for an <code>Option</code>. You can also us <code>for</code>-comprehensions or <code>map</code>/<code>flatMap</code> to chain them and easily propagate failures.</p>
+<p>The downside of using <code>Option</code>s is that it doesn't give you any place to put the more information about the error. If you need to distinguish between multiple failures, e.g. to display error messages to a user, you need something more powerful. You could return <code>Option[Option[T]]</code> or even <code>Option[Option[Option[T]]]</code> to deal with a small fixed set of errors, but it probably makes more sense to define your own custom sealed trait to use as a return value.</p><h3 id="simple-sealed-trait">Simple Sealed Trait</h3>
+<p>When <code>Option[T]</code> isn't flexible enough, you may fall back to defining a custom sealed trait to represent errors. For example:</p>
+<pre><code class="scala">sealed trait Result
+object Result{
+  case class Success(value: String) extends Result
+  case class Failure(msg: String) extends Result
+  case class Error(msg: String) extends Result
+}
+
+def functionMayFail: Result
+</code></pre>
+<p>This way, who-ever calls <code>functionMayFail</code> will see that it has three possible cases: <code>Success</code>, <code>Failure</code> and <code>Error</code>, each of which has their own results associated with it. You can define your own <code>map</code>/<code>flatMap</code> so you can use it in <code>for</code>-comprehensions to propagate the various failure states.</p><h3 id="exceptions">Exceptions</h3>
+<p>Exceptions are controversial, but they have their place for things that can "almost never" go wrong, but still do: <code>/ by zero</code>, <code>ClassNotFound</code>, <code>NoSuchFileException</code>, <code>StackOverflowError</code>, <code>OutOfMemoryError</code> keyboard interruption, etc..</p>
+<p>In general, it is often unfeasible to make everything that could fail with one of these errors return an <a href="#Option">Option</a> or some kind of <a href="#simple-sealed-trait">ADT</a>: every expression in your codebase can potentially <code>StackOverflow</code> or <code>OutOfMemory</code> or <code>ClassNotFound</code>! Much arithmetic is choke full of <code>/</code> calls, and it is unreasonable (both from the boilerplate and from the performance-cost) to wrap every one of those in an <code>Option</code>. So what happens when something goes wrong?</p>
+<p>You could decide that you want the program to halt if any of these cases appear, and try to debug it. And that's exactly what exceptions do if you don't catch them: they propagate up the stack and exit your program with a message and stack trace to help debug what went wrong. Perfect!</p>
+<p>You could also decide you want to run some code after the problem occurs, e.g. to report the error for later debugging somewhere else, and to perhaps keep the process going since despite the unexpected failure the "next" task it's doing should be unaffected. And that's where you catch exceptions and proceed!</p>
+<p>For example, if you are writing a large and complex sub-system that accomplishes one task, it is often reasonable to assume that</p>
+<ol>
+  <li>There will be bugs that causes a whole range of "impossible" errors to occur</li>
+  <li>When they occur, you want to report them somehow with diagnostics</li>
+  <li>You want the rest of the program to continue anyway despite these bugs</li>
+</ol>
+<p>This is the case where you could consider placing a large <code>try</code>-<code>catch</code> around calls to that subsystem, logging the exception, and moving on. In theory you <em>could</em> place fine-grained <code>try</code>-<code>catch</code>es around every individual possibly-failure point and convert them all to <code>Option</code>s or your own <code>sealed trait</code>, and you can log-the-error-and-carry-on in the same way, but all that really does is convolute your code considerably for (in this case) no benefit.</p><h3 id="error-flags">Error Flags</h3>
+<p>Error flags are a convention which goes something like</p>
+<ul>
+  <li>If some succeeds, it does something</li>
+  <li>If it fails, it does nothing and sets a special variable e.g.</li>
+</ul>
+<pre><code class="scala">var error = -1 // no error
+
+def doThing() = {
+  ...
+  if (didntWork) error = 5 //
+  ...
+}
+
+doThing()
+if (error == 5) println(&quot;It failed =/&quot;)
+</code></pre>
+<p>This has a few problems:</p>
+<ul>
+  <li>It is much less safe than the above cases of using <a href="#Option">Option</a>,  <a href="#simple-sealed-trait">ADTs</a> or <a href="#Exceptions">Exceptions</a>: if you forget  to check the error flag, the program keeps running, possibly doing the  wrong thing!</li>
+  <li>It is <em>incredibly</em> easy to forget to check error flags. They aren't shown  in type signatures, and you have to remember that for each method there's  a special mutable variable you have to check each time.</li>
+</ul>
+<p>Overall, you should avoid them as much as is possible.</p>
+<p><em>Sometimes it is not possible</em>: error flags are probably the fastest way of transmitting the "something failed" information, and it could matter in hot code paths. Like using <a href="#mutability-for-perf">Mutability For Perf</a>, it is reasonable to <em>sometimes</em> drop down to using an error flag to eek out the last 5% of performance after you've profiled the code and identified the bottleneck as error-handling.</p>
+<p>Even when you do this, make sure to encapsulate the error flag as tightly as possible, keeping it local to the internals of the class or method or package, and documenting it like crazy as the dangerous performance-hack that it is.</p><h2 id="asynchronous-return-types">Asynchronous Return Types</h2>
+<ol>
+  <li><em><a href="#return-t">The simplest case, return <code>T</code></a></em></li>
+  <li><em><a href="#return-future">For asynchronous results, return <code>Future[T]</code></a></em></li>
+  <li><em><a href="#take-a-callback-t--unit">Only pass in callbacks e.g. <code>onSuccess: T =&gt; Unit</code> as a last resort</a></em></li>
+</ol>
+<p>If you can get away without any asynchrony, you should. Otherwise, <code>Future[T]</code> is the first preferred asynchronous return type. Only use callback functions to "return" asynchronous results when <code>Future</code>s don't work (e.g. you want to call it more than once).</p><h3 id="return-t">Return T</h3>
+<pre><code class="scala">def foo(): T
+</code></pre>
+<p>This is the simplest case, and is almost not worth discussing. If you can get away without asynchrny, do so: your code will run faster, stack-traces will be more useful, debuggers will work better. For all the hype about non-blocking asynchronous stuff, plain-old-synchronous-code works better in cases where you can get away with it.</p><h3 id="return-future">Return Future</h3>
+<pre><code class="scala">def foo(): Future[T]
+</code></pre>
+<p>The next alternative is returning a <code>Future[T]</code> that represents an asynchronous result. While other languages e.g. Java or Javascript, and low-level APIs may often use callbacks <code>Future</code>s come first in the principle-of-least-power scale because they are strictly weaker than callbacks: unlike callbacks, they can only provide a single result.</p>
+<p>If you follow this scale, someone who receives a <code>Future</code> from your code knows it can only fire once. What's more, someone who passes an asynchronous callback into your code <em>knows</em> it will fire multiple times because otherwise you would have given a <code>Future</code> instead!</p>
+<p><code>Future</code>s provide lots of benefits over callbacks. For example, consecutive <code>Future</code>s can be "flattened out" in a way that callbacks cannot. <code>Future</code>s also propagate errors by default, where-as in callback-driven APIs it is very easy to accidentally ignore them.</p><h3 id="take-a-callback-t--unit">Take a callback: T =&gt; Unit</h3>
+<pre><code class="scala">def foo(onSuccess: T =&gt; Unit): Unit
+</code></pre>
+<p>Callbacks are the oldest and most "raw" method for providing asynchronous results. You call a function, and when it's done it calls your passed-in-function with the result you can then do things with.</p>
+<p>In general, they should be avoided in favor of <code>Future</code>s whenever possible. There are cases where <code>Future</code>s don't work and callbacks are necessary, e.g. when they fire multiple times, but when <code>Future</code>s work use a <code>Future</code>.</p><h2 id="dependency-injection">Dependency Injection</h2>
+<ol>
+  <li><em><a href="#hardcode-it">First, hard-code the dependency</a></em></li>
+  <li><em><a href="#method-parameter">Second, pass it as a parameter to the method which needs it</a></em></li>
+  <li><em><a href="#constructor-injection">Third, inject it into multiple methods by passing it into a containing class</a></em></li>
+  <li><em><a href="#abstract-members">Fourth, if your containing class is split into traits in multiple files, use abstract members</a></em></li>
+  <li><em><a href="#implicit-method-parameter">Fifth, make the method parameter implicit</a></em></li>
+  <li><em><a href="#dynamic-variables-aka-global-mutable-state">If all else fails, use "Dynamic Variables" aka global-mutable-state</a></em></li>
+  <li><em><a href="#setter-injection">Don't use setter injection</a></em></li>
+</ol><h3 id="hardcode-it">Hardcode It</h3>
+<pre><code class="scala">def sayHello(msg: String) = println(&quot;Hello World: &quot; + msg)
+
+sayHello(&quot;Mooo&quot;)
+</code></pre>
+<p>This is the simplest case, and is very common. If you can get away with hard-coding the dependency (e.g. to <code>println</code>), just do it. If you need additional flexibility to swap it out, refactor later.</p><h3 id="method-parameter">Method Parameter</h3>
+<pre><code class="scala">def sayHello(msg: String, log: String =&gt; Unit) = log(&quot;Hello World: &quot; + msg)
+
+sayHello(&quot;Mooo&quot;, System.out.println)
+sayHello(&quot;ErrorMooo&quot;, System.err.println)
+</code></pre>
+<p>As a next step, if you need to swap out <code>println</code>, pass it in as a method parameter. Here we see we can call it with either <code>System.out.println</code> or <code>System.err.println</code>, or with our remote-logger, or test-logger to inspect results or other things.</p><h3 id="constructor-injection">Constructor Injection</h3>
+<p>If you find yourself passing the same logger to lots of different functions:</p>
+<pre><code class="scala">def func(log: String =&gt; Unit) = ... func2(log) ...
+def func2(log: String =&gt; Unit) = ... func3(log) ...
+def func3(log: String =&gt; Unit) = ... func4(log) ...
+def func4(log: String =&gt; Unit) = ... func5(log) ...
+def func5(log: String =&gt; Unit) = ... func6(log) ...
+def func6(log: String =&gt; Unit) = ... func7(log) ...
+def func7(log: String =&gt; Unit) = ... func8(log) ...
+def func8(log: String =&gt; Unit) = ... func9(log) ...
+def func9(log: String =&gt; Unit) = ... sayHello(&quot;Moo&quot;, log) ...
+
+def sayHello(msg: String, log: String =&gt; Unit) = log(&quot;Hello World: &quot; + msg)
+
+func(System.out.println)
+func(System.err.println)
+</code></pre>
+<p>You can wrap those functions into a class and inject it into the class instead:</p>
+<pre><code class="scala">class Container(log: String =&gt; Unit){
+  def func() = ... func2() ...
+  def func2() = ... func3() ...
+  def func3() = ... func4() ...
+  def func4() = ... func5() ...
+  def func5() = ... func6() ...
+  def func6() = ... func7() ...
+  def func7() = ... func8() ...
+  def func8() = ... func9() ...
+  def func9() = ... sayHello(&quot;Moo&quot;) ...
+
+  def sayHello(msg: String) = log(&quot;Hello World: &quot; + msg)
+}
+
+new Container(System.out.println).func()
+new Container(System.err.println).func()
+</code></pre>
+<p>The same technique applies if you need the same logger injected into different <code>class</code>es or <code>object</code>s: simply nest those <code>class</code>es or <code>object</code>s inside (in this case) the <code>Container</code> class and they'll all get access to it without needing to add <code>log</code> into each-and-every method signature.</p><h3 id="abstract-members">Abstract Members</h3>
+<p>If you're trying to use Constructor Injection but your <code>Container</code> class is getting too large, split it into separate files as individual <code>trait</code>s.</p>
+<pre><code class="scala">// Foo.scala
+trait Foo{
+  def log: String =&gt; Unit
+  def func() = ... func2(log) ...
+  def func2() = ... func3(log) ...
+  def func3() = ... func4(log) ...
+}
+
+// Bar.scala
+trait Bar extends Foo{
+  def log: String =&gt; Unit
+  def func4() = ... func5(log) ...
+  def func5() = ... func6(log) ...
+  def func6() = ... func7(log) ...
+}
+
+// Baz.scala
+trait Baz extends Bar{
+  def log: String =&gt; Unit
+  def func7() = ... func8(log) ...
+  def func9() = ... sayHello(&quot;Moo&quot;, log) ...
+  def sayHello(msg: String) = log(&quot;Hello World: &quot; + msg)
+}
+
+// Main.scala
+class Container(val log: String =&gt; Unit) extends Foo with Bar with Baz
+new Container(System.out.println).func()
+new Container(System.err.println).func()
+</code></pre>
+<p>In doing so, you will need to pass <code>log</code> into each individual <code>trait</code>. <code>trait</code>s can't take constructor parameters, but you can do it by giving them an abstract method <code>log</code> and having the main <code>Container</code> class extend all these <code>trait</code>s and implement <code>log</code> concretely.</p><h3 id="implicit-method-parameter">Implicit Method Parameter</h3>
+<p>If you find yourself passing the same logger everywhere:</p>
+<pre><code class="scala">def sayHello(msg: String, log: String =&gt; Unit) = log(&quot;Hello World: &quot; + msg)
+
+sayHello(&quot;Mooo&quot;, System.out.println)
+sayHello(&quot;Mooo2&quot;, System.out.println)
+sayHello(&quot;Mooo3&quot;, System.out.println)
+sayHello(&quot;Mooo4&quot;, System.out.println)
+sayHello(&quot;Mooo5&quot;, System.out.println)
+sayHello(&quot;Mooo6&quot;, System.out.println)
+sayHello(&quot;Mooo7&quot;, System.out.println)
+sayHello(&quot;Mooo8&quot;, System.out.println)
+sayHello(&quot;Mooo9&quot;, System.out.println)
+</code></pre>
+<p><em>And</em> the use-sites are "all over the place", not limited to one (or a small number of) classes, then make it an implicit parameter</p>
+<pre><code class="scala">def sayHello(msg: String)(implicit log: String =&gt; Unit) = log(&quot;Hello World: &quot; + msg)
+
+implicit val logger: String =&gt; Unit = System.out.println
+sayHello(&quot;Mooo&quot;)
+sayHello(&quot;Mooo2&quot;)
+sayHello(&quot;Mooo3&quot;)
+sayHello(&quot;Mooo4&quot;)
+sayHello(&quot;Mooo5&quot;)
+sayHello(&quot;Mooo6&quot;)
+sayHello(&quot;Mooo7&quot;)
+sayHello(&quot;Mooo8&quot;)
+sayHello(&quot;Mooo9&quot;)
+</code></pre>
+<p>In general, you should only do this if you are passing it around a <em>lot</em>: into dozens of callsites at least. Nevertheless, in a large program that's not unreasonable, especially for common things like logging.</p>
+<p>However, if the use sites are all relatively localized, you should prefer to use <a href="#constructor-injection">Constructor Injection</a> rather than creating a new implicit parameter just for one small section of your code. Reserve implicit parameters for the cases where the callsites are scattered and constructor injection into all the disparate classes becomes tedious.</p><h3 id="dynamic-variables-aka-global-mutable-state">"Dynamic Variables" aka Global Mutable State</h3>
+<p>This is a common pattern, where some global/thread-local variable is set before running your code, and your code reads from it as a global. It is used in almost every web framework out there: from Scala frameworks like Lift, to Python frameworks like Flask or Django. It looks like this:</p>
+<pre><code class="scala">var log: String =&gt; Unit = null
+def func() = ... func2(log) ...
+def func2() = ... func3(log) ...
+def func3() = ... func4(log) ...
+def func4() = ... func5(log) ...
+def func5() = ... func6(log) ...
+def func6() = ... func7(log) ...
+def func7() = ... func8(log) ...
+def func8() = ... func9(log) ...
+def func9() = ... sayHello(&quot;Moo&quot;, log) ...
+
+def sayHello(msg: String) = log(&quot;Hello World: &quot; + msg)
+
+log = System.out.println
+func() // Logs to stdout
+log = System.err.println
+func() // Logs to stderr
+</code></pre>
+<p>It has a lot of convenience: you don't need to wrap everything into a <code>class</code>, you don't need to add an <code>implicit</code> into all your method signatures or pass the <code>log</code> function around manually.</p>
+<p>On the other hand, it is the most dangerous: it is no longer obvious which parts of the code have a <code>log</code> function "available" and which parts don't. It is easy to make a mistake like calling a method using <code>log</code> "too early", before it has been initialized, and having it compile perfectly well but blow up at runtime:</p>
+<pre><code class="scala">var log: String =&gt; Unit = null
+def func() = ... func2(log) ...
+def func2() = ... func3(log) ...
+def func3() = ... func4(log) ...
+def func4() = ... func5(log) ...
+def func5() = ... func6(log) ...
+def func6() = ... func7(log) ...
+def func7() = ... func8(log) ...
+def func8() = ... func9(log) ...
+def func9() = ... sayHello(&quot;Moo&quot;, log) ...
+
+def sayHello(msg: String) = log(&quot;Hello World: &quot; + msg)
+
+func() // KA-BOOM
+log = System.out.println
+func() // Logs to stdout
+log = System.err.println
+func() // Logs to stderr
+</code></pre>
+<p>This is a problem that does not exist in the dependency-injection techniques suggested earlier/above: hard-coding it, using method-parameters (explicit or implicit), constructor injection, abstract-member injection, in all these cases the compiler knows statically which methods have a <code>log</code> function available and which don't, and will helpfully provide a compile-error if you attempt to use <code>log</code> where it's not available. With Dynamic Variables, you get no such assurance.</p>
+<p>Thus, while this gives you the most power, it also gives you the least safety and should be avoided if possible.</p><h3 id="setter-injection">Setter Injection</h3>
+<p>"Setter Injection" refers to instantiating an object, and then setting some variable onto that object which it will use when you call methods on it.</p>
+<p>As described in the section on Immutability &amp; Mutability, don't do that: mutable state should only be used to model mutable things, and not as an ad-hoc way of passing parameters to a function call.</p><div><hr /><div style="color: rgb(158, 167, 174);">Updated <a href="https://github.com/lihaoyi/blog/commit/abba401c95a3d2d79d5caee9c61eb8c794d6d0be">2016-03-04 </a><a href="https://github.com/lihaoyi/blog/commit/0ee2646783a067226df962661b391d0fa3818174">2016-02-19 </a><a href="https://github.com/lihaoyi/blog/commit/6e92e9bb4cd6f68a4f214f0e1cf830165ae7ab5b">2016-02-14 </a><a href="https://github.com/lihaoyi/blog/commit/325f74286854a461a2ac432eae12bb0f5e5431f6">2016-02-14 </a><a href="https://github.com/lihaoyi/blog/commit/9eef8204f025f23a48da9563f236257045f82bc6">2016-02-14 </a><a href="https://github.com/lihaoyi/blog/commit/2c8bbc0d1ce4f10f746a7d3c46925b050ea2fc45">2016-02-14 </a><a href="https://github.com/lihaoyi/blog/commit/00f45a23193e4545471a1ce4d3737ee67f657e79">2016-02-14 </a></div></div><div id="disqus_thread"></div><script>
+      /**
+      * RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+      * LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+      */
+
+      var disqus_config = function () {
+      this.page.url = "http://www.lihaoyi.com/post/StrategicScalaStylePrincipleofLeastPower.html"; // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "Strategic Scala Style: Principle of Least Power"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+      };
+
+      (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+
+      s.src = '//lihaoyi.disqus.com/embed.js';
+
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+      })();
+  </script></div><div class=" cache6e734f883e5a972fd8c15f0a7a2b05ec-WideStyles-footer cache6e734f883e5a972fd8c15f0a7a2b05ec-Styles-footer">Last published 2016-03-04</div></body></html>
